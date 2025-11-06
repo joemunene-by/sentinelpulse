@@ -1,0 +1,16 @@
+{
+  "name": "SentinelPulse",
+  "short_name": "SentinelPulse",
+  "description": "Real-time threat intelligence dashboard",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#071226",
+  "theme_color": "#00E6C3",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
