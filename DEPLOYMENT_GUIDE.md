@@ -65,6 +65,8 @@ Complete guide to deploy SentinelPulse to GitHub and Vercel (or other free platf
    - Add:
      - `VITE_USE_REAL_API` = `true`
      - `VITE_NEWSAPI_KEY` = `your_newsapi_key`
+     - `VITE_USE_BACKEND` = `false` (set to `true` if you deploy backend)
+     - `VITE_API_BASE_URL` = `your_backend_url/api` (only if using backend)
    - Click "Save"
 
 5. **Deploy:**
@@ -256,6 +258,20 @@ If you only want backend for local development:
 - Use a backend proxy for API calls
 - Or use Vercel/Netlify serverless functions
 - See `src/api/README_API.md` for details
+- **Note:** If using backend, make sure CORS is configured for your frontend domain
+
+### Backend Connection Issues
+
+**Frontend works without backend:**
+- The frontend automatically falls back to real APIs or mock data
+- Set `VITE_USE_BACKEND=false` if you don't want to use backend
+- Backend is completely optional
+
+**If using backend:**
+- Make sure backend is deployed and accessible
+- Check `VITE_API_BASE_URL` points to correct backend URL
+- Verify CORS allows your frontend domain
+- Check backend logs for errors
 
 ## 📝 Post-Deployment
 
