@@ -3,14 +3,54 @@
 @tailwind utilities;
 
 @layer base {
-  * {
-    @apply border-border;
+  :root[data-theme="dark"],
+  :root:not([data-theme]) {
+    --bg-base: #071226;
+    --bg-surface: #1B2430;
+    --text-primary: #E5E7EB;
+    --text-secondary: #9CA3AF;
+    --text-muted: #6B7280;
+    --border-color: rgba(27, 36, 48, 0.5);
   }
-  
+
+  :root[data-theme="light"] {
+    --bg-base: #F9FAFB;
+    --bg-surface: #FFFFFF;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-muted: #6B7280;
+    --border-color: rgba(229, 231, 235, 0.5);
+  }
+
   body {
-    @apply bg-base text-gray-300 font-body antialiased;
+    @apply font-body antialiased;
     margin: 0;
     padding: 0;
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Theme-aware utility classes */
+  [data-theme="light"] .bg-base {
+    background-color: var(--bg-base);
+  }
+  
+  [data-theme="light"] .bg-surface {
+    background-color: var(--bg-surface);
+  }
+  
+  [data-theme="light"] .text-white {
+    color: var(--text-primary);
+  }
+  
+  [data-theme="light"] .text-gray-300,
+  [data-theme="light"] .text-gray-400 {
+    color: var(--text-secondary);
+  }
+  
+  [data-theme="light"] .border-surface {
+    border-color: var(--border-color);
   }
 
   html {

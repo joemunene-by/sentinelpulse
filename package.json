@@ -4,15 +4,17 @@
   "type": "module",
   "description": "SentinelPulse - Real-time Threat Intelligence Dashboard",
   "homepage": "https://YOUR_GITHUB_USERNAME.github.io/sentinelpulse",
-
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
-  "dev": "vite",
-  "build": "vite build",
-  "preview": "vite preview",
-  "predeploy": "npm run build",
-  "deploy": "gh-pages -d dist"
-      },
-
+    "dev": "node node_modules/vite/bin/vite.js",
+    "build": "node node_modules/vite/bin/vite.js build",
+    "preview": "node node_modules/vite/bin/vite.js preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
   "dependencies": {
     "date-fns": "^2.30.0",
     "framer-motion": "^10.16.4",

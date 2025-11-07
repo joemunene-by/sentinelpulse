@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ThemeProvider } from './contexts/ThemeContext'
 import Nav from './components/Nav'
 import HeroSummary from './components/HeroSummary'
 import FiltersPanel from './components/FiltersPanel'
@@ -112,8 +113,9 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-base">
-      <Nav />
+    <ThemeProvider>
+      <div className="min-h-screen bg-base">
+        <Nav />
       
       <main className="relative">
         {/* Hero/Summary Section */}
@@ -169,40 +171,41 @@ function App() {
         onClose={handleModalClose}
       />
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
 
-      {/* About Section (for anchor link) */}
-      <section id="about" className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-heading font-bold text-white mb-6">About SentinelPulse</h2>
-          <div className="bg-surface rounded-lg p-8 border border-surface/50">
-            <p className="text-gray-300 leading-relaxed mb-4">
-              SentinelPulse is an enterprise-grade cybersecurity threat intelligence dashboard designed 
-              to provide real-time visibility into global cyber threats. Built by CEO Joe Munene, this 
-              platform aggregates and visualizes threat data from multiple sources, enabling security 
-              teams to make informed decisions quickly.
-            </p>
-            <p className="text-gray-300 leading-relaxed mb-4">
-              The dashboard features real-time threat feeds, incident timelines, global heatmaps, and 
-              comprehensive filtering capabilities. All data is currently mocked for demonstration purposes, 
-              but the platform is designed to integrate with real threat intelligence APIs including 
-              NewsAPI, VirusTotal, MISP, and Recorded Future.
-            </p>
-            <p className="text-gray-300 leading-relaxed">
-              For inquiries or partnerships, please contact CEO Joe Munene at{' '}
-              <a href="mailto:joemunene984@gmail.com" className="text-accent-teal hover:underline">
-                joemunene984@gmail.com
-              </a>
-              {' '}or{' '}
-              <a href="tel:+254718733968" className="text-accent-teal hover:underline">
-                +254 718 733 968
-              </a>.
-            </p>
+        {/* About Section (for anchor link) */}
+        <section id="about" className="py-8 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-heading font-bold text-white mb-6">About SentinelPulse</h2>
+            <div className="bg-surface rounded-lg p-8 border border-surface/50">
+              <p className="text-gray-300 leading-relaxed mb-4">
+                SentinelPulse is an enterprise-grade cybersecurity threat intelligence dashboard designed 
+                to provide real-time visibility into global cyber threats. Built by CEO Joe Munene, this 
+                platform aggregates and visualizes threat data from multiple sources, enabling security 
+                teams to make informed decisions quickly.
+              </p>
+              <p className="text-gray-300 leading-relaxed mb-4">
+                The dashboard features real-time threat feeds, incident timelines, global heatmaps, and 
+                comprehensive filtering capabilities. The platform integrates with real threat intelligence 
+                APIs including NewsAPI, CISA advisories, and can be extended with VirusTotal, MISP, and 
+                Recorded Future.
+              </p>
+              <p className="text-gray-300 leading-relaxed">
+                For inquiries or partnerships, please contact CEO Joe Munene at{' '}
+                <a href="mailto:joemunene984@gmail.com" className="text-accent-teal hover:underline">
+                  joemunene984@gmail.com
+                </a>
+                {' '}or{' '}
+                <a href="tel:+254718733968" className="text-accent-teal hover:underline">
+                  +254 718 733 968
+                </a>.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </ThemeProvider>
   )
 }
 

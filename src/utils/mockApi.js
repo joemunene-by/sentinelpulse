@@ -1,5 +1,6 @@
 import sampleNews from '../data/sampleNews.json'
 import sampleIncidents from '../data/sampleIncidents.json'
+import { fetchCombinedNews } from '../api/realApi'
 
 /**
  * Simulate API delay
@@ -102,6 +103,23 @@ const filterIncidents = (incidents, filters) => {
  * @returns {Promise<Array>} Filtered news items
  */
 export const fetchNews = async (filters = {}) => {
+  // Try to fetch real news first
+  try {
+    const realNews = await fetchCombinedNews(filters)
+    if (realNews && realNews.length > 0) {
+      // Combine with mock data for demonstration
+      const mockFiltered = filterNews(sampleNews, filters)
+      const combined = [...realNews, ...mockFiltered]
+      // Sort by date (newest first)
+      return combined.sort((a, b) => 
+        new Date(b.published_at) - new Date(a.published_at)
+      )
+    }
+  } catch (error) {
+    console.warn('Real API failed, using mock data:', error)
+  }
+  
+  // Fallback to mock data
   await delay(300)
   const filtered = filterNews(sampleNews, filters)
   // Sort by date (newest first)

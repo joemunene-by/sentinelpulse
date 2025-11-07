@@ -23,6 +23,13 @@ const NewsFeed = ({ filters, onItemOpen, onTagClick }) => {
     }
 
     loadNews()
+    
+    // Auto-refresh every 5 minutes for real-time updates
+    const interval = setInterval(() => {
+      loadNews()
+    }, 5 * 60 * 1000) // 5 minutes
+    
+    return () => clearInterval(interval)
   }, [filters])
 
   if (loading) {

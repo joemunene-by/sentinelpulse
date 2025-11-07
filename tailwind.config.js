@@ -7,10 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        'base': '#071226',
+        'base': {
+          DEFAULT: '#071226',
+          light: '#F9FAFB',
+        },
         'accent-teal': '#00E6C3',
         'accent-violet': '#7A4DFF',
-        'surface': '#1B2430',
+        'surface': {
+          DEFAULT: '#1B2430',
+          light: '#FFFFFF',
+        },
         'danger': '#FF645A',
       },
       fontFamily: {

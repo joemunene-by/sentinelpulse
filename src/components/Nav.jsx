@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FiMenu, FiX, FiSun, FiMoon } from 'react-icons/fi'
+import { useTheme } from '../contexts/ThemeContext'
 
 const Nav = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const { theme, toggleTheme } = useTheme()
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -63,11 +65,11 @@ const Nav = () => {
           {/* Right side controls */}
           <div className="hidden md:flex items-center space-x-4">
             <button
-              onClick={() => setReducedMotion(!reducedMotion)}
+              onClick={toggleTheme}
               className="p-2 text-gray-400 hover:text-accent-teal transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-accent-teal"
-              aria-label="Toggle reduced motion"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             >
-              {reducedMotion ? <FiSun size={20} /> : <FiMoon size={20} />}
+              {theme === 'dark' ? <FiSun size={20} /> : <FiMoon size={20} />}
             </button>
           </div>
 

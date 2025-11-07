@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { FiBookmark, FiBookmarkCheck, FiExternalLink } from 'react-icons/fi'
+import { FiBookmark, FiExternalLink } from 'react-icons/fi'
 import { formatRelativeTime, getSeverityColor, getConfidenceColor } from '../utils/formatters'
 
 const ThreatCard = ({ item, onTagClick, onBookmark, onOpen }) => {
@@ -69,7 +69,7 @@ const ThreatCard = ({ item, onTagClick, onBookmark, onOpen }) => {
           className="ml-4 p-2 text-gray-400 hover:text-accent-teal transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-accent-teal"
           aria-label={bookmarked ? 'Remove bookmark' : 'Bookmark article'}
         >
-          {bookmarked ? <FiBookmarkCheck size={20} /> : <FiBookmark size={20} />}
+          <FiBookmark size={20} className={bookmarked ? 'fill-accent-teal text-accent-teal' : ''} />
         </button>
       </div>
 
