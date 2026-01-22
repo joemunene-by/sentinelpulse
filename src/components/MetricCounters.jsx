@@ -38,11 +38,11 @@ const MetricCounter = ({ value, label, delay = 0 }) => {
   }, [value, delay, reducedMotion])
 
   return (
-    <div className="bg-surface rounded-lg p-4 border border-surface/50">
-      <p className="text-2xl font-mono font-bold text-accent-teal mb-1">
+    <div className="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-accent-teal/20 hover:border-accent-teal/40 transition-colors shadow-[0_0_15px_rgba(0,230,195,0.05)]">
+      <p className="text-2xl font-mono font-bold text-accent-teal mb-1 drop-shadow-[0_0_8px_rgba(0,230,195,0.4)]">
         {displayValue.toLocaleString()}
       </p>
-      <p className="text-xs text-gray-400 uppercase tracking-wide">{label}</p>
+      <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest">{label}</p>
     </div>
   )
 }
@@ -134,21 +134,21 @@ const MetricCounters = ({ filters }) => {
       </div>
 
       {/* Average Severity */}
-      <div className="bg-surface rounded-lg p-4 border border-surface/50">
-        <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Average Severity</p>
-        <p className="text-xl font-heading font-bold text-white">{metrics.avgSeverity}</p>
+      <div className="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-accent-teal/20">
+        <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mb-2">Average Severity</p>
+        <p className="text-xl font-heading font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{metrics.avgSeverity}</p>
       </div>
 
       {/* Top Sector */}
-      <div className="bg-surface rounded-lg p-4 border border-surface/50">
-        <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Top Affected Sector</p>
-        <p className="text-lg font-heading font-semibold text-accent-teal">{metrics.topSector}</p>
+      <div className="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-accent-teal/20">
+        <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mb-2">Top Affected Sector</p>
+        <p className="text-lg font-heading font-semibold text-accent-teal drop-shadow-[0_0_8px_rgba(0,230,195,0.3)]">{metrics.topSector}</p>
       </div>
 
       {/* Attack Types Distribution */}
       {attackTypes.length > 0 && (
-        <div className="bg-surface rounded-lg p-4 border border-surface/50">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-4">Attack Types</p>
+        <div className="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-accent-teal/20">
+          <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mb-4">Attack Types</p>
           <ResponsiveContainer width="100%" height={150}>
             <PieChart>
               <Pie
@@ -173,8 +173,8 @@ const MetricCounters = ({ filters }) => {
 
       {/* Sector Distribution */}
       {sectorDistribution.length > 0 && (
-        <div className="bg-surface rounded-lg p-4 border border-surface/50">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-4">Sector Distribution</p>
+        <div className="bg-white/5 backdrop-blur-md rounded-lg p-4 border border-accent-teal/20">
+          <p className="text-[10px] text-gray-400 font-mono uppercase tracking-widest mb-4">Sector Distribution</p>
           <ResponsiveContainer width="100%" height={150}>
             <BarChart data={sectorDistribution}>
               <XAxis dataKey="name" tick={{ fill: '#9CA3AF', fontSize: 10 }} />

@@ -3,17 +3,26 @@
     "id": "np-2025-0001",
     "title": "Ransomware group deploys novel loader targeting government supply chains",
     "source": "Security Daily",
-    "published_at": "2025-01-31T13:22:00Z",
+    "published_at": "2026-01-22T19:00:00Z",
     "region": "Europe",
     "country": "Germany",
     "severity": "High",
     "confidence": 82,
-    "tags": ["ransomware", "supply-chain"],
+    "tags": [
+      "ransomware",
+      "supply-chain"
+    ],
     "summary": "A new loader has been observed delivering a ransomware payload via third-party vendor updates. The attack vector exploits trust relationships in government procurement networks.",
     "indicators": {
-      "ips": ["185.36.45.12"],
-      "urls": ["http://mal.example.com/update.exe"],
-      "hashes": ["d4c3b4a5e6f7g8h9i0j1k2l3m4n5o6p7"]
+      "ips": [
+        "185.36.45.12"
+      ],
+      "urls": [
+        "http://mal.example.com/update.exe"
+      ],
+      "hashes": [
+        "d4c3b4a5e6f7g8h9i0j1k2l3m4n5o6p7"
+      ]
     },
     "content": "Security researchers have identified a sophisticated ransomware campaign targeting government supply chains across Europe. The attack utilizes a novel loader mechanism that disguises itself as legitimate vendor software updates. The malware establishes persistence through scheduled tasks and exfiltrates sensitive data before encryption. Organizations are advised to verify all third-party software updates through official channels and implement network segmentation.",
     "related_case_id": "cs-2024-11"
@@ -22,17 +31,27 @@
     "id": "np-2025-0002",
     "title": "Zero-day exploit discovered in cloud infrastructure management platform",
     "source": "Threat Intelligence Hub",
-    "published_at": "2025-01-31T10:15:00Z",
+    "published_at": "2026-01-22T18:00:00Z",
     "region": "North America",
     "country": "United States",
     "severity": "Critical",
     "confidence": 95,
-    "tags": ["zero-day", "cloud", "exploit"],
+    "tags": [
+      "zero-day",
+      "cloud",
+      "exploit"
+    ],
     "summary": "A critical zero-day vulnerability in a widely-used cloud management platform allows remote code execution. Active exploitation has been observed in the wild.",
     "indicators": {
-      "ips": ["192.168.100.45"],
-      "urls": ["https://exploit.example.org/payload"],
-      "hashes": ["a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"]
+      "ips": [
+        "192.168.100.45"
+      ],
+      "urls": [
+        "https://exploit.example.org/payload"
+      ],
+      "hashes": [
+        "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+      ]
     },
     "content": "Security researchers have uncovered a zero-day vulnerability affecting cloud infrastructure management platforms used by thousands of enterprises. The flaw allows unauthenticated remote code execution through the API endpoint. Active exploitation campaigns have been detected targeting financial services and healthcare organizations. Immediate patching is recommended, and affected organizations should review access logs for suspicious activity.",
     "related_case_id": "cs-2024-12"
@@ -41,17 +60,27 @@
     "id": "np-2025-0003",
     "title": "AI-powered phishing campaign targets executive-level credentials",
     "source": "Cyber Defense Weekly",
-    "published_at": "2025-01-30T18:45:00Z",
+    "published_at": "2026-01-22T17:00:00Z",
     "region": "Asia",
     "country": "Japan",
     "severity": "High",
     "confidence": 78,
-    "tags": ["ai", "phishing", "credential-theft"],
+    "tags": [
+      "ai",
+      "phishing",
+      "credential-theft"
+    ],
     "summary": "Advanced AI-generated phishing emails are successfully bypassing traditional email security filters. The campaign specifically targets C-suite executives.",
     "indicators": {
-      "ips": ["203.45.67.89"],
-      "urls": ["https://phish.example.net/login"],
-      "hashes": ["b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7"]
+      "ips": [
+        "203.45.67.89"
+      ],
+      "urls": [
+        "https://phish.example.net/login"
+      ],
+      "hashes": [
+        "b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7"
+      ]
     },
     "content": "A sophisticated phishing campaign leveraging AI-generated content has been identified targeting executive leadership across multiple industries. The emails use natural language processing to create highly convincing messages that evade traditional detection mechanisms. The campaign redirects victims to credential-harvesting pages that mimic legitimate corporate login portals. Security teams should implement multi-factor authentication and conduct awareness training focused on executive protection.",
     "related_case_id": "cs-2024-13"
@@ -60,17 +89,26 @@
     "id": "np-2025-0004",
     "title": "Supply chain attack compromises software vendor's update mechanism",
     "source": "Infosec Bulletin",
-    "published_at": "2025-01-30T14:30:00Z",
+    "published_at": "2026-01-22T16:00:00Z",
     "region": "Europe",
     "country": "United Kingdom",
     "severity": "Critical",
     "confidence": 88,
-    "tags": ["supply-chain", "malware"],
+    "tags": [
+      "supply-chain",
+      "malware"
+    ],
     "summary": "A software vendor's update server was compromised, leading to the distribution of malicious updates to thousands of customers worldwide.",
     "indicators": {
-      "ips": ["178.123.45.67"],
-      "urls": ["https://update.vendor.com/package.zip"],
-      "hashes": ["c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8"]
+      "ips": [
+        "178.123.45.67"
+      ],
+      "urls": [
+        "https://update.vendor.com/package.zip"
+      ],
+      "hashes": [
+        "c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8"
+      ]
     },
     "content": "A major software vendor has confirmed a breach of its update distribution infrastructure. Attackers gained access to the vendor's update servers and injected malicious code into legitimate software packages. The compromised updates were distributed to over 15,000 organizations globally. The malware establishes a backdoor and exfiltrates sensitive data. Affected organizations should immediately verify the integrity of all software installations and review network traffic for anomalous connections.",
     "related_case_id": "cs-2024-14"
@@ -79,17 +117,26 @@
     "id": "np-2025-0005",
     "title": "Ransomware-as-a-Service platform expands operations",
     "source": "Threat Research Lab",
-    "published_at": "2025-01-30T09:20:00Z",
+    "published_at": "2026-01-22T15:00:00Z",
     "region": "Eastern Europe",
     "country": "Russia",
     "severity": "High",
     "confidence": 75,
-    "tags": ["ransomware", "crimeware"],
+    "tags": [
+      "ransomware",
+      "crimeware"
+    ],
     "summary": "A ransomware-as-a-service operation has launched new features and lowered barriers to entry, increasing the threat landscape for small and medium businesses.",
     "indicators": {
-      "ips": ["91.234.56.78"],
-      "urls": ["http://raas.example.biz/panel"],
-      "hashes": ["d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9"]
+      "ips": [
+        "91.234.56.78"
+      ],
+      "urls": [
+        "http://raas.example.biz/panel"
+      ],
+      "hashes": [
+        "d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9"
+      ]
     },
     "content": "Security researchers have identified a new ransomware-as-a-service platform that simplifies the process of launching ransomware attacks. The platform provides a user-friendly interface for affiliates and includes automated victim targeting, encryption, and payment processing. The service has already been used in attacks against hundreds of organizations. The low barrier to entry means that less-skilled attackers can now participate in ransomware campaigns, significantly expanding the threat surface.",
     "related_case_id": "cs-2024-15"
@@ -98,17 +145,25 @@
     "id": "np-2025-0006",
     "title": "Critical vulnerability in industrial control systems exposed",
     "source": "ICS Security Advisories",
-    "published_at": "2025-01-29T16:10:00Z",
+    "published_at": "2026-01-22T14:00:00Z",
     "region": "North America",
     "country": "Canada",
     "severity": "Critical",
     "confidence": 92,
-    "tags": ["ics", "vulnerability", "critical-infrastructure"],
+    "tags": [
+      "ics",
+      "vulnerability",
+      "critical-infrastructure"
+    ],
     "summary": "A critical flaw in industrial control system software allows attackers to remotely manipulate physical processes. Multiple critical infrastructure sectors are affected.",
     "indicators": {
-      "ips": ["45.67.89.123"],
+      "ips": [
+        "45.67.89.123"
+      ],
       "urls": [],
-      "hashes": ["e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0"]
+      "hashes": [
+        "e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0"
+      ]
     },
     "content": "A severe vulnerability has been discovered in widely-deployed industrial control system software that could allow attackers to manipulate physical processes in manufacturing, energy, and water treatment facilities. The vulnerability exists in the communication protocol handling and can be exploited remotely. Successful exploitation could result in physical damage, service disruption, and safety hazards. Immediate patching and network segmentation are critical.",
     "related_case_id": "cs-2024-16"
@@ -117,17 +172,27 @@
     "id": "np-2025-0007",
     "title": "APT group targets NGOs with custom malware",
     "source": "Global Threat Monitor",
-    "published_at": "2025-01-29T11:55:00Z",
+    "published_at": "2026-01-22T13:00:00Z",
     "region": "Africa",
     "country": "Kenya",
     "severity": "Medium",
     "confidence": 70,
-    "tags": ["apt", "malware", "ngo"],
+    "tags": [
+      "apt",
+      "malware",
+      "ngo"
+    ],
     "summary": "An advanced persistent threat group has been observed targeting non-governmental organizations with custom-built malware designed to steal sensitive operational data.",
     "indicators": {
-      "ips": ["156.78.90.234"],
-      "urls": ["https://payload.example.co/ngomalware"],
-      "hashes": ["f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1"]
+      "ips": [
+        "156.78.90.234"
+      ],
+      "urls": [
+        "https://payload.example.co/ngomalware"
+      ],
+      "hashes": [
+        "f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1"
+      ]
     },
     "content": "Security researchers have uncovered a targeted campaign against non-governmental organizations operating in conflict zones. The attackers use social engineering techniques to deliver custom malware that collects intelligence on humanitarian operations, personnel, and funding sources. The malware is designed to evade detection and maintain long-term persistence. NGOs are advised to implement enhanced security controls and conduct security awareness training for staff.",
     "related_case_id": "cs-2024-17"
@@ -136,16 +201,22 @@
     "id": "np-2025-0008",
     "title": "Cloud storage misconfiguration exposes sensitive datasets",
     "source": "Data Breach Report",
-    "published_at": "2025-01-28T20:30:00Z",
+    "published_at": "2026-01-22T12:00:00Z",
     "region": "Asia",
     "country": "Singapore",
     "severity": "High",
     "confidence": 85,
-    "tags": ["cloud", "data-exposure", "misconfiguration"],
+    "tags": [
+      "cloud",
+      "data-exposure",
+      "misconfiguration"
+    ],
     "summary": "A misconfigured cloud storage bucket exposed over 2 million records containing personal information and business data. The exposure was discovered by security researchers.",
     "indicators": {
       "ips": [],
-      "urls": ["https://storage.example.cloud/public/data"],
+      "urls": [
+        "https://storage.example.cloud/public/data"
+      ],
       "hashes": []
     },
     "content": "A security researcher discovered an improperly configured cloud storage bucket that was publicly accessible without authentication. The bucket contained over 2 million records including customer data, employee information, and internal business documents. The exposure lasted for several months before discovery. Affected organizations should immediately secure all cloud resources, conduct a comprehensive audit of cloud storage configurations, and notify affected individuals in accordance with data protection regulations.",
@@ -155,17 +226,27 @@
     "id": "np-2025-0009",
     "title": "Cryptocurrency exchange suffers massive data breach",
     "source": "Financial Security Watch",
-    "published_at": "2025-01-28T15:45:00Z",
+    "published_at": "2026-01-22T11:00:00Z",
     "region": "Asia",
     "country": "South Korea",
     "severity": "Critical",
     "confidence": 90,
-    "tags": ["breach", "cryptocurrency", "financial"],
+    "tags": [
+      "breach",
+      "cryptocurrency",
+      "financial"
+    ],
     "summary": "A major cryptocurrency exchange has confirmed a data breach affecting millions of user accounts. Stolen credentials are being sold on dark web marketplaces.",
     "indicators": {
-      "ips": ["198.76.54.32"],
-      "urls": ["https://exfil.example.net/creds"],
-      "hashes": ["g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2"]
+      "ips": [
+        "198.76.54.32"
+      ],
+      "urls": [
+        "https://exfil.example.net/creds"
+      ],
+      "hashes": [
+        "g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2"
+      ]
     },
     "content": "A leading cryptocurrency exchange has disclosed a significant data breach that compromised user account information, including email addresses, hashed passwords, and API keys. The breach was discovered after security researchers found stolen credentials being sold on dark web marketplaces. The exchange has reset all user passwords and is requiring multi-factor authentication for all accounts. Users are advised to change passwords immediately and review account activity for unauthorized transactions.",
     "related_case_id": "cs-2024-19"
@@ -174,17 +255,27 @@
     "id": "np-2025-0010",
     "title": "Mobile banking trojan targets Android users globally",
     "source": "Mobile Security Alert",
-    "published_at": "2025-01-28T08:15:00Z",
+    "published_at": "2026-01-22T10:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "severity": "High",
     "confidence": 80,
-    "tags": ["mobile", "trojan", "banking"],
+    "tags": [
+      "mobile",
+      "trojan",
+      "banking"
+    ],
     "summary": "A sophisticated Android banking trojan is spreading through malicious apps distributed via third-party app stores and phishing campaigns.",
     "indicators": {
-      "ips": ["112.233.44.55"],
-      "urls": ["https://malapp.example.com/download"],
-      "hashes": ["h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3"]
+      "ips": [
+        "112.233.44.55"
+      ],
+      "urls": [
+        "https://malapp.example.com/download"
+      ],
+      "hashes": [
+        "h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3"
+      ]
     },
     "content": "Security researchers have identified a new Android banking trojan that targets financial applications installed on mobile devices. The trojan uses overlay attacks to steal login credentials and two-factor authentication codes. It also has the capability to intercept SMS messages and make unauthorized transactions. The malware is distributed through malicious apps on third-party app stores and phishing campaigns. Users should only download apps from official app stores and enable device security features.",
     "related_case_id": "cs-2024-20"
@@ -193,15 +284,22 @@
     "id": "np-2025-0011",
     "title": "DDoS attack disrupts government services",
     "source": "National Security Brief",
-    "published_at": "2025-01-27T22:00:00Z",
+    "published_at": "2026-01-20T20:00:00Z",
     "region": "Europe",
     "country": "France",
     "severity": "Medium",
     "confidence": 88,
-    "tags": ["ddos", "government"],
+    "tags": [
+      "ddos",
+      "government"
+    ],
     "summary": "A distributed denial-of-service attack targeted government web services, causing significant disruption to citizen-facing portals and online services.",
     "indicators": {
-      "ips": ["67.89.123.45", "78.90.234.56", "89.01.345.67"],
+      "ips": [
+        "67.89.123.45",
+        "78.90.234.56",
+        "89.01.345.67"
+      ],
       "urls": [],
       "hashes": []
     },
@@ -212,17 +310,27 @@
     "id": "np-2025-0012",
     "title": "Healthcare ransomware attack impacts patient care",
     "source": "Healthcare Security News",
-    "published_at": "2025-01-27T14:20:00Z",
+    "published_at": "2026-01-19T20:00:00Z",
     "region": "North America",
     "country": "United States",
     "severity": "Critical",
     "confidence": 95,
-    "tags": ["ransomware", "healthcare", "critical-infrastructure"],
+    "tags": [
+      "ransomware",
+      "healthcare",
+      "critical-infrastructure"
+    ],
     "summary": "A ransomware attack on a major hospital system has disrupted patient care services, forcing the cancellation of surgeries and emergency room diversions.",
     "indicators": {
-      "ips": ["134.56.78.90"],
-      "urls": ["http://ransom.example.org/decrypt"],
-      "hashes": ["i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4"]
+      "ips": [
+        "134.56.78.90"
+      ],
+      "urls": [
+        "http://ransom.example.org/decrypt"
+      ],
+      "hashes": [
+        "i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4"
+      ]
     },
     "content": "A ransomware attack has crippled a major hospital network's IT infrastructure, affecting electronic health records, scheduling systems, and diagnostic equipment. The attack has forced the hospital to divert emergency patients and cancel non-urgent procedures. Patient safety is a primary concern as clinical staff struggle to access critical patient information. The hospital is working with cybersecurity experts and law enforcement to restore services while ensuring patient care continuity.",
     "related_case_id": "cs-2024-22"
@@ -231,17 +339,26 @@
     "id": "np-2025-0013",
     "title": "Social engineering campaign targets remote workers",
     "source": "Workplace Security Alert",
-    "published_at": "2025-01-27T09:30:00Z",
+    "published_at": "2026-01-18T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "severity": "Medium",
     "confidence": 72,
-    "tags": ["social-engineering", "remote-work"],
+    "tags": [
+      "social-engineering",
+      "remote-work"
+    ],
     "summary": "A coordinated social engineering campaign is targeting remote workers with fake IT support requests and credential harvesting attempts.",
     "indicators": {
-      "ips": ["145.67.89.012"],
-      "urls": ["https://support.example.com/verify"],
-      "hashes": ["j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5"]
+      "ips": [
+        "145.67.89.012"
+      ],
+      "urls": [
+        "https://support.example.com/verify"
+      ],
+      "hashes": [
+        "j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5"
+      ]
     },
     "content": "Security teams have observed an increase in social engineering attacks targeting remote workers. Attackers pose as IT support staff and contact employees via phone, email, and messaging platforms to request credentials or remote access. The campaign has been successful in gaining unauthorized access to corporate networks and cloud services. Organizations should implement multi-factor authentication, provide regular security awareness training, and establish clear procedures for IT support verification.",
     "related_case_id": "cs-2024-23"
@@ -250,17 +367,23 @@
     "id": "np-2025-0014",
     "title": "Critical security flaw in authentication library",
     "source": "Vulnerability Research",
-    "published_at": "2025-01-26T17:45:00Z",
+    "published_at": "2026-01-17T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "severity": "Critical",
     "confidence": 96,
-    "tags": ["vulnerability", "authentication", "library"],
+    "tags": [
+      "vulnerability",
+      "authentication",
+      "library"
+    ],
     "summary": "A critical vulnerability in a widely-used authentication library allows attackers to bypass authentication and gain unauthorized access to applications.",
     "indicators": {
       "ips": [],
       "urls": [],
-      "hashes": ["k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6"]
+      "hashes": [
+        "k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6"
+      ]
     },
     "content": "Security researchers have discovered a critical authentication bypass vulnerability in a popular open-source authentication library used by millions of applications. The flaw allows attackers to craft authentication tokens that bypass validation checks, potentially granting unauthorized access to protected resources. The vulnerability affects multiple versions of the library and requires immediate patching. Organizations using the library should update to the latest version and review authentication logs for suspicious activity.",
     "related_case_id": "cs-2024-24"
@@ -269,17 +392,27 @@
     "id": "np-2025-0015",
     "title": "Espionage campaign targets defense contractors",
     "source": "National Defense Security",
-    "published_at": "2025-01-26T12:10:00Z",
+    "published_at": "2026-01-16T20:00:00Z",
     "region": "North America",
     "country": "United States",
     "severity": "High",
     "confidence": 83,
-    "tags": ["espionage", "apt", "defense"],
+    "tags": [
+      "espionage",
+      "apt",
+      "defense"
+    ],
     "summary": "An advanced persistent threat group has been targeting defense contractors with spear-phishing campaigns designed to steal classified and sensitive technical information.",
     "indicators": {
-      "ips": ["178.90.123.456"],
-      "urls": ["https://payload.example.mil/docs"],
-      "hashes": ["l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7"]
+      "ips": [
+        "178.90.123.456"
+      ],
+      "urls": [
+        "https://payload.example.mil/docs"
+      ],
+      "hashes": [
+        "l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7"
+      ]
     },
     "content": "An advanced persistent threat group believed to be state-sponsored has been conducting a long-term espionage campaign against defense contractors. The attackers use highly targeted spear-phishing emails that appear to come from trusted partners and government agencies. The malware used in the campaign is designed to exfiltrate technical specifications, design documents, and other sensitive information. Defense contractors are advised to implement enhanced email security controls and conduct regular security assessments.",
     "related_case_id": "cs-2024-25"
@@ -288,17 +421,27 @@
     "id": "np-2025-0016",
     "title": "IoT botnet targets smart city infrastructure",
     "source": "Smart Infrastructure Security",
-    "published_at": "2025-01-26T06:25:00Z",
+    "published_at": "2026-01-15T20:00:00Z",
     "region": "Asia",
     "country": "China",
     "severity": "High",
     "confidence": 77,
-    "tags": ["iot", "botnet", "smart-city"],
+    "tags": [
+      "iot",
+      "botnet",
+      "smart-city"
+    ],
     "summary": "A new botnet has been discovered targeting Internet of Things devices in smart city deployments, potentially allowing attackers to disrupt critical municipal services.",
     "indicators": {
-      "ips": ["189.01.234.567"],
-      "urls": ["http://botnet.example.cn/c2"],
-      "hashes": ["m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8"]
+      "ips": [
+        "189.01.234.567"
+      ],
+      "urls": [
+        "http://botnet.example.cn/c2"
+      ],
+      "hashes": [
+        "m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8"
+      ]
     },
     "content": "Security researchers have identified a botnet specifically designed to compromise IoT devices used in smart city infrastructure, including traffic management systems, environmental sensors, and public safety networks. The botnet can be used to disrupt services, exfiltrate data, or serve as a platform for launching additional attacks. The compromised devices often lack basic security controls, making them easy targets. Municipalities should implement network segmentation, change default credentials, and regularly update IoT device firmware.",
     "related_case_id": "cs-2024-26"
@@ -307,16 +450,22 @@
     "id": "np-2025-0017",
     "title": "Data leak exposes millions of social media user records",
     "source": "Privacy Watch",
-    "published_at": "2025-01-25T19:50:00Z",
+    "published_at": "2026-01-14T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "severity": "Medium",
     "confidence": 81,
-    "tags": ["data-leak", "privacy", "social-media"],
+    "tags": [
+      "data-leak",
+      "privacy",
+      "social-media"
+    ],
     "summary": "A misconfigured database exposed millions of social media user records including profile information, contact details, and activity data.",
     "indicators": {
       "ips": [],
-      "urls": ["https://db.example.social/export"],
+      "urls": [
+        "https://db.example.social/export"
+      ],
       "hashes": []
     },
     "content": "A security researcher discovered an unsecured database containing millions of social media user records that was publicly accessible without authentication. The database included profile information, email addresses, phone numbers, and activity data. The exposure lasted for several weeks before being secured. The incident highlights the importance of proper database security configuration and regular security audits. Affected users should be aware of potential phishing attempts and identity theft risks.",
@@ -326,17 +475,27 @@
     "id": "np-2025-0018",
     "title": "Watering hole attack targets financial sector",
     "source": "Financial Threat Intelligence",
-    "published_at": "2025-01-25T13:35:00Z",
+    "published_at": "2026-01-13T20:00:00Z",
     "region": "Europe",
     "country": "Switzerland",
     "severity": "High",
     "confidence": 79,
-    "tags": ["watering-hole", "financial", "malware"],
+    "tags": [
+      "watering-hole",
+      "financial",
+      "malware"
+    ],
     "summary": "A watering hole attack has compromised a financial industry news website, infecting visitors with malware designed to steal banking credentials.",
     "indicators": {
-      "ips": ["167.234.567.890"],
-      "urls": ["https://finance.example.ch/infect"],
-      "hashes": ["n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9"]
+      "ips": [
+        "167.234.567.890"
+      ],
+      "urls": [
+        "https://finance.example.ch/infect"
+      ],
+      "hashes": [
+        "n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9"
+      ]
     },
     "content": "A popular financial industry news website has been compromised and used as a watering hole to distribute malware to visitors. The attackers injected malicious JavaScript that redirects visitors to exploit kits designed to install banking trojans. The campaign specifically targets financial sector professionals who visit the site for industry news. Organizations should implement web filtering, use isolated browsing environments, and ensure endpoint protection is up to date.",
     "related_case_id": "cs-2024-28"
@@ -345,17 +504,27 @@
     "id": "np-2025-0019",
     "title": "Supply chain attack compromises developer tools",
     "source": "Developer Security Alert",
-    "published_at": "2025-01-25T07:15:00Z",
+    "published_at": "2026-01-12T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "severity": "Critical",
     "confidence": 91,
-    "tags": ["supply-chain", "developer-tools", "malware"],
+    "tags": [
+      "supply-chain",
+      "developer-tools",
+      "malware"
+    ],
     "summary": "A popular developer tool package repository was compromised, leading to the distribution of malicious packages that could affect thousands of software projects.",
     "indicators": {
-      "ips": ["123.456.789.012"],
-      "urls": ["https://repo.example.dev/package"],
-      "hashes": ["o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0"]
+      "ips": [
+        "123.456.789.012"
+      ],
+      "urls": [
+        "https://repo.example.dev/package"
+      ],
+      "hashes": [
+        "o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0"
+      ]
     },
     "content": "Security researchers have discovered that a popular developer tool package repository was compromised, with attackers injecting malicious code into legitimate packages. The malicious packages include backdoors that can exfiltrate source code, credentials, and other sensitive information from development environments. Thousands of software projects may be affected. Developers should immediately review their dependencies, verify package integrity, and implement automated security scanning for third-party code.",
     "related_case_id": "cs-2024-29"
@@ -364,17 +533,27 @@
     "id": "np-2025-0020",
     "title": "AI model poisoning attack discovered in machine learning platforms",
     "source": "AI Security Research",
-    "published_at": "2025-01-24T21:00:00Z",
+    "published_at": "2026-01-11T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "severity": "High",
     "confidence": 74,
-    "tags": ["ai", "machine-learning", "poisoning"],
+    "tags": [
+      "ai",
+      "machine-learning",
+      "poisoning"
+    ],
     "summary": "Researchers have identified a model poisoning attack that compromises machine learning models by injecting malicious data during training, leading to biased or malicious outputs.",
     "indicators": {
-      "ips": ["198.765.432.109"],
-      "urls": ["https://training.example.ai/data"],
-      "hashes": ["p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1"]
+      "ips": [
+        "198.765.432.109"
+      ],
+      "urls": [
+        "https://training.example.ai/data"
+      ],
+      "hashes": [
+        "p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1"
+      ]
     },
     "content": "Security researchers have discovered a sophisticated attack technique that poisons machine learning models during the training phase. By injecting carefully crafted malicious data into training datasets, attackers can cause models to produce biased, incorrect, or malicious outputs. The attack is particularly concerning for models used in critical applications such as fraud detection, medical diagnosis, and autonomous systems. Organizations using machine learning should implement data validation, model verification, and adversarial testing procedures.",
     "related_case_id": "cs-2024-30"

@@ -62,8 +62,10 @@ const HeroSummary = ({ filters, onExportSnapshot }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.5 }}
-            className="lg:col-span-1 bg-surface rounded-lg p-6 border border-surface/50"
+            className="lg:col-span-1 bg-white/5 backdrop-blur-md rounded-lg p-6 border border-accent-teal/20 relative overflow-hidden"
           >
+            {/* Background scanning effect for the card */}
+            <div className="absolute inset-0 bg-gradient-to-br from-accent-teal/5 to-transparent pointer-events-none" />
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-sm font-medium text-gray-400 uppercase tracking-wide">
                 Global Threat Level
@@ -77,8 +79,8 @@ const HeroSummary = ({ filters, onExportSnapshot }) => {
                 />
               ) : null}
             </div>
-            <div className={`inline-flex items-center px-4 py-2 rounded-lg border-2 ${getThreatBadgeClass(threatLevel.level)}`}>
-              <span className="text-2xl font-heading font-bold">{threatLevel.level}</span>
+            <div className={`inline-flex items-center px-4 py-2 rounded-lg border-2 shadow-[0_0_15px_rgba(0,0,0,0.2)] ${getThreatBadgeClass(threatLevel.level)}`}>
+              <span className="text-2xl font-heading font-bold tracking-tight">{threatLevel.level}</span>
             </div>
             <div className="mt-4">
               <p className="text-xs text-gray-400 mb-2">Incident Trend (24h)</p>
@@ -118,7 +120,7 @@ const HeroSummary = ({ filters, onExportSnapshot }) => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: reducedMotion ? 0 : 0.3, delay: index * 0.1 }}
-                  className="bg-surface rounded-lg p-4 border border-surface/50 hover:border-accent-teal/50 transition-colors"
+                  className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/5 hover:border-accent-teal/30 hover:bg-white/10 transition-all group"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">

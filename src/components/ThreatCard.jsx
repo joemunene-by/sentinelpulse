@@ -39,7 +39,7 @@ const ThreatCard = ({ item, onTagClick, onBookmark, onOpen }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: reducedMotion ? 0 : 0.3 }}
       onClick={() => onOpen(item)}
-      className="bg-surface rounded-lg p-5 border border-surface/50 hover:border-accent-teal/50 transition-all cursor-pointer group"
+      className="bg-white/5 backdrop-blur-md rounded-lg p-5 border border-accent-teal/10 hover:border-accent-teal/50 hover:bg-white/10 transition-all cursor-pointer group relative overflow-hidden"
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
@@ -50,14 +50,17 @@ const ThreatCard = ({ item, onTagClick, onBookmark, onOpen }) => {
       }}
       aria-label={`Open article: ${item.title}`}
     >
-      <div className="flex items-start justify-between mb-3">
+      {/* Decorative corner accent */}
+      <div className="absolute top-0 right-0 w-16 h-16 bg-accent-teal/5 -mr-8 -mt-8 rotate-45 pointer-events-none" />
+
+      <div className="flex items-start justify-between mb-3 relative z-10">
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-2">
-            <span className="text-xs font-medium text-gray-400">{item.source}</span>
-            <span className="text-xs text-gray-500">•</span>
-            <span className="text-xs text-gray-400">{formatRelativeTime(item.published_at)}</span>
+            <span className="text-[10px] font-mono font-medium text-accent-teal/80 uppercase tracking-wider">{item.source}</span>
+            <span className="text-xs text-gray-600">•</span>
+            <span className="text-[10px] font-mono text-gray-400 uppercase">{formatRelativeTime(item.published_at)}</span>
           </div>
-          <h3 className="text-lg font-heading font-semibold text-white mb-2 group-hover:text-accent-teal transition-colors line-clamp-2">
+          <h3 className="text-lg font-heading font-semibold text-white mb-2 group-hover:text-accent-teal transition-colors line-clamp-2 drop-shadow-[0_0_8px_rgba(255,255,255,0.1)]">
             {item.title}
           </h3>
           <p className="text-sm text-gray-400 line-clamp-2 mb-3">
@@ -73,11 +76,11 @@ const ThreatCard = ({ item, onTagClick, onBookmark, onOpen }) => {
         </button>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mb-3">
-        <span className={`px-2 py-1 text-xs font-medium rounded ${getSeverityColor(item.severity)}`}>
+      <div className="flex flex-wrap items-center gap-2 mb-3 relative z-10">
+        <span className={`px-2 py-0.5 text-[10px] font-mono font-bold rounded uppercase tracking-tighter ${getSeverityColor(item.severity)}`}>
           {item.severity}
         </span>
-        <span className={`text-xs font-mono ${getConfidenceColor(item.confidence)}`}>
+        <span className={`text-[10px] font-mono uppercase tracking-widest ${getConfidenceColor(item.confidence)}`}>
           Confidence: {item.confidence}%
         </span>
         {item.region && (

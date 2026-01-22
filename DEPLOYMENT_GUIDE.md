@@ -137,7 +137,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/sentinelpulse/', // Replace with your repo name
+  base: './', // Use relative paths for better portability across different hosting environments
   server: {
     port: 3000,
     open: true,
