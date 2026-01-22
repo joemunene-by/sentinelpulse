@@ -2,7 +2,7 @@
   {
     "id": "inc-2025-0001",
     "title": "Ransomware Attack on Healthcare Network",
-    "timestamp": "2025-01-31T08:00:00Z",
+    "timestamp": "2026-01-22T19:00:00Z",
     "region": "North America",
     "country": "United States",
     "sector": "Healthcare",
@@ -14,7 +14,7 @@
   {
     "id": "inc-2025-0002",
     "title": "Supply Chain Compromise",
-    "timestamp": "2025-01-31T06:30:00Z",
+    "timestamp": "2026-01-22T18:00:00Z",
     "region": "Europe",
     "country": "Germany",
     "sector": "Government",
@@ -26,7 +26,7 @@
   {
     "id": "inc-2025-0003",
     "title": "Zero-Day Exploitation",
-    "timestamp": "2025-01-30T14:20:00Z",
+    "timestamp": "2026-01-22T17:00:00Z",
     "region": "North America",
     "country": "United States",
     "sector": "Financial Services",
@@ -38,7 +38,7 @@
   {
     "id": "inc-2025-0004",
     "title": "AI-Powered Phishing Campaign",
-    "timestamp": "2025-01-30T10:15:00Z",
+    "timestamp": "2026-01-22T16:00:00Z",
     "region": "Asia",
     "country": "Japan",
     "sector": "Technology",
@@ -50,7 +50,7 @@
   {
     "id": "inc-2025-0005",
     "title": "Cryptocurrency Exchange Breach",
-    "timestamp": "2025-01-29T16:45:00Z",
+    "timestamp": "2026-01-22T15:00:00Z",
     "region": "Asia",
     "country": "South Korea",
     "sector": "Financial Services",
@@ -62,7 +62,7 @@
   {
     "id": "inc-2025-0006",
     "title": "ICS Vulnerability Exposure",
-    "timestamp": "2025-01-29T12:00:00Z",
+    "timestamp": "2026-01-22T14:00:00Z",
     "region": "North America",
     "country": "Canada",
     "sector": "Critical Infrastructure",
@@ -74,7 +74,7 @@
   {
     "id": "inc-2025-0007",
     "title": "Cloud Storage Misconfiguration",
-    "timestamp": "2025-01-28T18:30:00Z",
+    "timestamp": "2026-01-22T13:00:00Z",
     "region": "Asia",
     "country": "Singapore",
     "sector": "Technology",
@@ -86,7 +86,7 @@
   {
     "id": "inc-2025-0008",
     "title": "Mobile Banking Trojan",
-    "timestamp": "2025-01-28T09:00:00Z",
+    "timestamp": "2026-01-22T12:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "sector": "Financial Services",
@@ -98,7 +98,7 @@
   {
     "id": "inc-2025-0009",
     "title": "Government DDoS Attack",
-    "timestamp": "2025-01-27T20:00:00Z",
+    "timestamp": "2026-01-22T11:00:00Z",
     "region": "Europe",
     "country": "France",
     "sector": "Government",
@@ -110,7 +110,7 @@
   {
     "id": "inc-2025-0010",
     "title": "APT Campaign Against Defense Contractors",
-    "timestamp": "2025-01-27T11:30:00Z",
+    "timestamp": "2026-01-22T10:00:00Z",
     "region": "North America",
     "country": "United States",
     "sector": "Defense",
@@ -122,7 +122,7 @@
   {
     "id": "inc-2025-0011",
     "title": "Social Engineering Remote Workers",
-    "timestamp": "2025-01-27T07:15:00Z",
+    "timestamp": "2026-01-20T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "sector": "Multiple",
@@ -134,7 +134,7 @@
   {
     "id": "inc-2025-0012",
     "title": "Authentication Library Vulnerability",
-    "timestamp": "2025-01-26T15:45:00Z",
+    "timestamp": "2026-01-19T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "sector": "Technology",
@@ -146,7 +146,7 @@
   {
     "id": "inc-2025-0013",
     "title": "IoT Botnet Formation",
-    "timestamp": "2025-01-26T05:20:00Z",
+    "timestamp": "2026-01-18T20:00:00Z",
     "region": "Asia",
     "country": "China",
     "sector": "Critical Infrastructure",
@@ -158,7 +158,7 @@
   {
     "id": "inc-2025-0014",
     "title": "Social Media Data Leak",
-    "timestamp": "2025-01-25T17:50:00Z",
+    "timestamp": "2026-01-17T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "sector": "Technology",
@@ -170,7 +170,7 @@
   {
     "id": "inc-2025-0015",
     "title": "Watering Hole Attack - Financial Sector",
-    "timestamp": "2025-01-25T11:35:00Z",
+    "timestamp": "2026-01-16T20:00:00Z",
     "region": "Europe",
     "country": "Switzerland",
     "sector": "Financial Services",
@@ -182,7 +182,7 @@
   {
     "id": "inc-2025-0016",
     "title": "Developer Tools Supply Chain Attack",
-    "timestamp": "2025-01-25T05:00:00Z",
+    "timestamp": "2026-01-15T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "sector": "Technology",
@@ -194,7 +194,7 @@
   {
     "id": "inc-2025-0017",
     "title": "AI Model Poisoning Attack",
-    "timestamp": "2025-01-24T19:00:00Z",
+    "timestamp": "2026-01-14T20:00:00Z",
     "region": "Global",
     "country": "Multiple",
     "sector": "Technology",
@@ -206,7 +206,7 @@
   {
     "id": "inc-2025-0018",
     "title": "NGO Targeting Campaign",
-    "timestamp": "2025-01-29T09:55:00Z",
+    "timestamp": "2026-01-13T20:00:00Z",
     "region": "Africa",
     "country": "Kenya",
     "sector": "Non-Profit",
@@ -218,7 +218,7 @@
   {
     "id": "inc-2025-0019",
     "title": "Ransomware-as-a-Service Expansion",
-    "timestamp": "2025-01-30T07:20:00Z",
+    "timestamp": "2026-01-12T20:00:00Z",
     "region": "Eastern Europe",
     "country": "Russia",
     "sector": "Multiple",
@@ -230,7 +230,7 @@
   {
     "id": "inc-2025-0020",
     "title": "Healthcare Emergency Response",
-    "timestamp": "2025-01-27T13:20:00Z",
+    "timestamp": "2026-01-11T20:00:00Z",
     "region": "North America",
     "country": "United States",
     "sector": "Healthcare",

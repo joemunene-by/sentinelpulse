@@ -122,6 +122,10 @@ export const fetchRealNews = async (filters = {}) => {
  * Fetch from CISA RSS Feed (free, no API key needed)
  */
 export const fetchCISAFeed = async () => {
+  if (!USE_REAL_API) {
+    return []
+  }
+
   try {
     const rssUrl = 'https://www.cisa.gov/news-events/cybersecurity-advisories/rss.xml'
     const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`
@@ -176,6 +180,10 @@ export const fetchCISAFeed = async () => {
  * Combine real news sources
  */
 export const fetchCombinedNews = async (filters = {}) => {
+  if (!USE_REAL_API) {
+    return []
+  }
+
   const [realNews, cisaFeeds] = await Promise.all([
     fetchRealNews(filters),
     fetchCISAFeed()
