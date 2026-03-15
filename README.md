@@ -221,4 +221,4 @@ This dashboard uses mock data for demonstration purposes. All threat intelligenc
 
 ---
 
-**Built with ❤️ by CEO Joe Munene**
+**Built with ❤️ by CEO Joe Munene.**
