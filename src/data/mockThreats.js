@@ -216,3 +216,83 @@ export const summaryStats = {
   activeMonitors: 312,
   threatLevel: "ELEVATED",
 };
+
+// --- Live-feed synthesis ---------------------------------------------------
+// Pools used to fabricate plausible-looking threats for the simulated
+// real-time feed. Purely cosmetic for the demo dashboard.
+const SYNTH = {
+  types: [
+    "Phishing", "Ransomware", "APT", "DDoS", "Exploit", "Malware",
+    "Credential Theft", "Supply Chain", "Network", "Cryptojacking",
+    "Insider Threat", "Watering Hole",
+  ],
+  severities: ["Critical", "High", "Medium", "Low"],
+  statuses: ["Active", "Monitoring", "Investigating", "Mitigated"],
+  regions: [
+    "North America", "Europe", "Asia Pacific", "Middle East",
+    "Africa", "South America", "Global", "Internal",
+  ],
+  sources: [
+    "CISA Alert", "FBI Flash", "NSA Advisory", "Mandiant",
+    "Cloudflare Threat Intel", "Palo Alto Unit 42", "Internal SOC",
+    "Europol EC3", "Snyk Advisory", "Dragos ICS-CERT",
+  ],
+  actors: [
+    "APT29", "Lazarus Group", "FIN7", "Volt Typhoon", "Scattered Spider",
+    "LockBit", "BlackCat", "Sandworm", "Kimsuky", "Cl0p",
+  ],
+  vectors: [
+    "Spear Phishing Campaign", "Ransomware Variant", "Zero-Day Exploit",
+    "Credential Stuffing Wave", "Supply Chain Implant", "C2 Beacon Activity",
+    "Lateral Movement", "Data Exfiltration", "Botnet Resurgence",
+    "Privilege Escalation",
+  ],
+};
+
+const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const hex = (n) =>
+  Array.from({ length: n }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("");
+
+function iocFor(type) {
+  switch (type) {
+    case "Exploit":
+      return `CVE-2026-${10000 + Math.floor(Math.random() * 89999)}`;
+    case "Ransomware":
+    case "Malware":
+      return `SHA256: ${hex(40)}`;
+    case "Phishing":
+    case "Watering Hole":
+    case "Supply Chain":
+      return `hxxps://${pick(["secure-update", "cdn-telemetry", "verify-portal", "cloud-sync"])}[.]${pick(["net", "cloud", "io", "com"])}/${hex(6)}`;
+    case "DDoS":
+    case "Network":
+      return `${pick(["UDP reflection", "BGP anomaly", "SYN flood"])} from ${Math.floor(Math.random() * 223) + 1}.x.x.x`;
+    default:
+      return `Indicator-${hex(8)}`;
+  }
+}
+
+let synthSeq = mockThreats.length;
+
+// Build a single synthetic threat stamped with the current time. The `isNew`
+// flag lets the UI briefly highlight freshly-arrived rows/cards.
+export function makeRandomThreat() {
+  const type = pick(SYNTH.types);
+  const severity = pick(SYNTH.severities);
+  const region = pick(SYNTH.regions);
+  synthSeq += 1;
+  const title = `${pick(SYNTH.actors)} ${pick(SYNTH.vectors)}`;
+  return {
+    id: `THR-${String(synthSeq).padStart(3, "0")}`,
+    title,
+    type,
+    severity,
+    source: `${pick(SYNTH.sources)} ${hex(4).toUpperCase()}`,
+    timestamp: new Date().toISOString(),
+    description: `Automated correlation flagged ${title.toLowerCase()} targeting ${region.toLowerCase()} assets. Indicators are consistent with ${severity.toLowerCase()}-severity ${type.toLowerCase()} activity and are under active triage.`,
+    ioc: iocFor(type),
+    status: pick(SYNTH.statuses),
+    region,
+    isNew: true,
+  };
+}

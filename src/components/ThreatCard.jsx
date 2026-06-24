@@ -1,68 +1,38 @@
 import { motion } from "framer-motion";
 import { FiClock, FiMapPin, FiTag, FiAlertTriangle } from "react-icons/fi";
 import { format, parseISO } from "date-fns";
+import { severityConfig, statusColors } from "../lib/threatUtils";
 
-const severityConfig = {
-  Critical: {
-    bg: "bg-sev-critical/15",
-    text: "text-sev-critical",
-    border: "border-sev-critical/30",
-    dot: "bg-sev-critical",
-  },
-  High: {
-    bg: "bg-sev-high/15",
-    text: "text-sev-high",
-    border: "border-sev-high/30",
-    dot: "bg-sev-high",
-  },
-  Medium: {
-    bg: "bg-sev-medium/15",
-    text: "text-sev-medium",
-    border: "border-sev-medium/30",
-    dot: "bg-sev-medium",
-  },
-  Low: {
-    bg: "bg-sev-low/15",
-    text: "text-sev-low",
-    border: "border-sev-low/30",
-    dot: "bg-sev-low",
-  },
-};
-
-const statusColors = {
-  Active: "text-sev-critical",
-  Monitoring: "text-secondary",
-  Investigating: "text-sev-medium",
-  Mitigated: "text-sev-low",
-  Remediated: "text-slate-400",
-  Patched: "text-slate-400",
-};
-
-export default function ThreatCard({ threat, index }) {
+// A single threat tile. Clicking opens the detail modal via onSelect.
+export default function ThreatCard({ threat, index, onSelect }) {
   const sev = severityConfig[threat.severity] || severityConfig.Medium;
 
   return (
-    <motion.div
+    <motion.button
+      type="button"
+      onClick={() => onSelect(threat)}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
-      className="glass-card group overflow-hidden p-5 transition-all hover:glow-primary"
+      transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.35 }}
+      whileHover={{ y: -3 }}
+      className={`glass-card group block w-full overflow-hidden border-l-4 p-5 text-left transition-shadow hover:glow-primary ${sev.ring} ${threat.isNew ? "ring-1 ring-secondary/40" : ""}`}
     >
       {/* Header */}
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex-1">
           <div className="mb-1 flex items-center gap-2">
-            <span className="font-mono text-[10px] text-slate-500">
-              {threat.id}
-            </span>
-            <span
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase ${sev.bg} ${sev.text} ${sev.border}`}
-            >
+            <span className="font-mono text-[10px] text-slate-500">{threat.id}</span>
+            <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase ${sev.bg} ${sev.text} ${sev.border}`}>
               <span className={`inline-block h-1.5 w-1.5 rounded-full ${sev.dot}`} />
               {threat.severity}
             </span>
+            {threat.isNew && (
+              <span className="rounded-full bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-secondary">
+                New
+              </span>
+            )}
           </div>
-          <h3 className="text-sm font-semibold leading-snug text-white group-hover:text-primary transition-colors">
+          <h3 className="text-sm font-semibold leading-snug text-white transition-colors group-hover:text-primary">
             {threat.title}
           </h3>
         </div>
@@ -99,6 +69,6 @@ export default function ThreatCard({ threat, index }) {
           {threat.status}
         </span>
       </div>
-    </motion.div>
+    </motion.button>
   );
 }

@@ -78,3 +78,22 @@ body {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.5; transform: scale(1.5); }
 }
+
+/* Ambient glow behind the whole app for depth. */
+.app-glow {
+  background-image: radial-gradient(
+    ellipse 80% 50% at 50% -8%,
+    rgba(217, 70, 239, 0.1),
+    transparent 60%
+  );
+}
+
+/* Brief tint when a freshly-detected threat row arrives in the live feed. */
+@keyframes flash {
+  0% { background-color: rgba(34, 211, 238, 0.16); }
+  100% { background-color: transparent; }
+}
+
+.animate-flash {
+  animation: flash 1.8s ease-out;
+}
