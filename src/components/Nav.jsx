@@ -1,7 +1,11 @@
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { FiShield, FiActivity, FiBell } from "react-icons/fi";
+import { severityConfig, relativeTime } from "../lib/threatUtils";
 
-export default function Nav() {
+export default function Nav({ live, onToggleLive, alerts = [], onSelect, lastUpdated }) {
+  const [open, setOpen] = useState(false);
+
   return (
     <nav className="sticky top-0 z-50 border-b border-white/5 bg-surface/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
@@ -23,29 +27,90 @@ export default function Nav() {
           </div>
         </div>
 
-        {/* Status */}
-        <div className="flex items-center gap-4">
+        {/* Status + notifications */}
+        <div className="flex items-center gap-3">
           <div className="hidden items-center gap-2 rounded-full bg-surface-card/80 px-3 py-1.5 text-xs sm:flex">
             <span className="pulse-dot inline-block h-2 w-2 rounded-full bg-green-400" />
             <span className="text-slate-400">Systems Operational</span>
           </div>
 
-          <div className="flex items-center gap-2 rounded-full bg-surface-card/80 px-3 py-1.5 text-xs">
-            <FiActivity className="h-3.5 w-3.5 text-secondary" />
-            <span className="text-slate-400">Live Feed</span>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative rounded-lg bg-surface-card/80 p-2 text-slate-400 transition-colors hover:text-white"
-            aria-label="Notifications"
+          <button
+            type="button"
+            onClick={onToggleLive}
+            className={`flex items-center gap-2 rounded-full px-3 py-1.5 text-xs transition-colors ${
+              live ? "bg-sev-low/10 text-sev-low" : "bg-surface-card/80 text-slate-400 hover:text-white"
+            }`}
+            title={live ? "Live feed running — click to pause" : "Feed paused — click to resume"}
           >
-            <FiBell className="h-4 w-4" />
-            <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-sev-critical text-[9px] font-bold text-white">
-              3
-            </span>
-          </motion.button>
+            <FiActivity className={`h-3.5 w-3.5 ${live ? "animate-pulse" : ""}`} />
+            <span className="hidden sm:inline">{live ? "Live Feed" : "Paused"}</span>
+          </button>
+
+          <div className="relative">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setOpen((v) => !v)}
+              className="relative rounded-lg bg-surface-card/80 p-2 text-slate-400 transition-colors hover:text-white"
+              aria-label="Notifications"
+            >
+              <FiBell className="h-4 w-4" />
+              {alerts.length > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-sev-critical px-1 text-[9px] font-bold text-white">
+                  {alerts.length > 9 ? "9+" : alerts.length}
+                </span>
+              )}
+            </motion.button>
+
+            <AnimatePresence>
+              {open && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                    transition={{ duration: 0.15 }}
+                    className="glass-card absolute right-0 z-20 mt-2 w-80 overflow-hidden p-0"
+                  >
+                    <div className="flex items-center justify-between border-b border-white/5 px-4 py-3">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                        Priority Alerts
+                      </span>
+                      {lastUpdated ? (
+                        <span className="text-[10px] text-slate-500">{relativeTime(lastUpdated)}</span>
+                      ) : null}
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {alerts.length === 0 ? (
+                        <p className="px-4 py-6 text-center text-xs text-slate-500">No priority alerts.</p>
+                      ) : (
+                        alerts.map((a) => {
+                          const sev = severityConfig[a.severity] || severityConfig.Medium;
+                          return (
+                            <button
+                              key={a.id}
+                              type="button"
+                              onClick={() => { onSelect?.(a); setOpen(false); }}
+                              className="flex w-full items-start gap-2 border-b border-white/[0.03] px-4 py-3 text-left transition-colors hover:bg-white/[0.03]"
+                            >
+                              <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${sev.dot}`} />
+                              <span className="min-w-0">
+                                <span className="block truncate text-xs font-medium text-white">{a.title}</span>
+                                <span className="text-[10px] text-slate-500">
+                                  {a.severity} · {a.region} · {relativeTime(a.timestamp)}
+                                </span>
+                              </span>
+                            </button>
+                          );
+                        })
+                      )}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </nav>

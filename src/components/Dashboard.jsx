@@ -1,181 +1,173 @@
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { FiShield, FiAlertOctagon, FiActivity, FiTrendingUp, FiClock } from "react-icons/fi";
 import {
-  FiShield,
-  FiAlertOctagon,
-  FiMonitor,
-  FiTrendingUp,
-} from "react-icons/fi";
-import { mockThreats, summaryStats } from "../data/mockThreats";
+  computeStats, severityCounts, matchesQuery, levelConfig,
+  threatsToCSV, downloadFile, relativeTime,
+} from "../lib/threatUtils";
+import StatCard from "./StatCard";
 import ThreatChart from "./ThreatChart";
+import SeverityDonut from "./SeverityDonut";
+import RegionBar from "./RegionBar";
+import Controls from "./Controls";
+import ThreatTable from "./ThreatTable";
 import ThreatCard from "./ThreatCard";
 
-const cards = [
-  {
-    label: "Total Threats",
-    value: summaryStats.totalThreats.toLocaleString(),
-    icon: FiShield,
-    color: "text-primary",
-    bg: "bg-primary/10",
-    glow: "glow-primary",
-  },
-  {
-    label: "Critical Alerts",
-    value: summaryStats.criticalAlerts,
-    icon: FiAlertOctagon,
-    color: "text-sev-critical",
-    bg: "bg-sev-critical/10",
-    glow: "",
-  },
-  {
-    label: "Active Monitors",
-    value: summaryStats.activeMonitors,
-    icon: FiMonitor,
-    color: "text-secondary",
-    bg: "bg-secondary/10",
-    glow: "glow-secondary",
-  },
-  {
-    label: "Threat Level",
-    value: summaryStats.threatLevel,
-    icon: FiTrendingUp,
-    color: "text-sev-high",
-    bg: "bg-sev-high/10",
-    glow: "",
-  },
-];
+export default function Dashboard({ feed, onSelect }) {
+  const { threats, live, toggleLive, lastUpdated } = feed;
 
-const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3 };
+  const [query, setQuery] = useState("");
+  const [severitySet, setSeveritySet] = useState(() => new Set());
+  const [status, setStatus] = useState("All");
+  const [type, setType] = useState("All");
+  const [view, setView] = useState("grid");
 
-const SeverityBadge = ({ severity }) => {
-  const styles = {
-    Critical: "bg-sev-critical/15 text-sev-critical border-sev-critical/30",
-    High: "bg-sev-high/15 text-sev-high border-sev-high/30",
-    Medium: "bg-sev-medium/15 text-sev-medium border-sev-medium/30",
-    Low: "bg-sev-low/15 text-sev-low border-sev-low/30",
+  const stats = useMemo(() => computeStats(threats), [threats]);
+  const sevCounts = useMemo(() => severityCounts(threats), [threats]);
+  const types = useMemo(() => [...new Set(threats.map((t) => t.type))].sort(), [threats]);
+  const statuses = useMemo(() => [...new Set(threats.map((t) => t.status))].sort(), [threats]);
+
+  const filtered = useMemo(
+    () =>
+      threats.filter(
+        (t) =>
+          matchesQuery(t, query) &&
+          (severitySet.size === 0 || severitySet.has(t.severity)) &&
+          (status === "All" || t.status === status) &&
+          (type === "All" || t.type === type),
+      ),
+    [threats, query, severitySet, status, type],
+  );
+
+  const level = levelConfig[stats.level] || levelConfig.LOW;
+  const hasFilters = Boolean(query) || severitySet.size > 0 || status !== "All" || type !== "All";
+
+  const toggleSeverity = (sev) =>
+    setSeveritySet((prev) => {
+      const next = new Set(prev);
+      if (next.has(sev)) next.delete(sev);
+      else next.add(sev);
+      return next;
+    });
+
+  const clearFilters = () => {
+    setQuery("");
+    setSeveritySet(new Set());
+    setStatus("All");
+    setType("All");
   };
-  return (
-    <span
-      className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase ${styles[severity] || styles.Medium}`}
-    >
-      {severity}
-    </span>
-  );
-};
 
-export default function Dashboard() {
-  const sortedThreats = [...mockThreats].sort(
-    (a, b) =>
-      (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9)
-  );
+  const exportCSV = () =>
+    downloadFile(`sentinelpulse-${new Date().toISOString().slice(0, 10)}.csv`, threatsToCSV(filtered), "text/csv");
+
+  const cards = [
+    { label: "Total Threats", value: stats.total, icon: FiShield, color: "text-primary", bg: "bg-primary/10", glow: "glow-primary" },
+    { label: "Critical Alerts", value: stats.critical, icon: FiAlertOctagon, color: "text-sev-critical", bg: "bg-sev-critical/10" },
+    { label: "Active Incidents", value: stats.active, icon: FiActivity, color: "text-secondary", bg: "bg-secondary/10", glow: "glow-secondary" },
+    { label: "Threat Level", value: stats.level, icon: FiTrendingUp, color: level.text, bg: "bg-white/5", hint: "Live posture" },
+  ];
 
   return (
     <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+      {/* Hero */}
+      <motion.header
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-wrap items-end justify-between gap-3"
+      >
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Threat Operations
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Real-time intelligence across global infrastructure.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
+            <FiClock className="h-3 w-3" />
+            Updated {relativeTime(lastUpdated)}
+          </span>
+          <span className={`flex items-center gap-2 rounded-full border border-white/10 bg-surface-card/60 px-3 py-1.5 text-xs font-semibold ${level.text}`}>
+            <span className={`h-2 w-2 rounded-full ${level.dot} ${live ? "pulse-dot" : ""}`} />
+            {stats.level}
+          </span>
+        </div>
+      </motion.header>
+
       {/* Summary cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card, i) => (
-          <motion.div
-            key={card.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1, duration: 0.4 }}
-            className={`glass-card flex items-center gap-4 p-5 ${card.glow}`}
-          >
-            <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${card.bg}`}>
-              <card.icon className={`h-5 w-5 ${card.color}`} />
-            </div>
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-slate-500">
-                {card.label}
-              </p>
-              <p className={`text-xl font-bold ${card.color}`}>{card.value}</p>
-            </div>
-          </motion.div>
+        {cards.map((c, i) => (
+          <StatCard key={c.label} index={i} {...c} />
         ))}
       </div>
 
-      {/* Chart */}
+      {/* Charts */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="lg:col-span-2"
+        >
+          <ThreatChart />
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+        >
+          <SeverityDonut threats={threats} />
+        </motion.div>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.5 }}
+        transition={{ delay: 0.45, duration: 0.5 }}
       >
-        <ThreatChart />
+        <RegionBar threats={threats} />
       </motion.div>
 
-      {/* Recent threats table */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.5, duration: 0.5 }}
-        className="glass-card overflow-hidden"
-      >
-        <div className="border-b border-white/5 px-5 py-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
-            Recent Threats
-          </h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-white/5 text-[11px] uppercase tracking-wider text-slate-500">
-                <th className="px-5 py-3 font-medium">ID</th>
-                <th className="px-5 py-3 font-medium">Threat</th>
-                <th className="px-5 py-3 font-medium">Type</th>
-                <th className="px-5 py-3 font-medium">Severity</th>
-                <th className="px-5 py-3 font-medium">Status</th>
-                <th className="hidden px-5 py-3 font-medium md:table-cell">
-                  Source
-                </th>
-                <th className="hidden px-5 py-3 font-medium lg:table-cell">
-                  Region
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedThreats.slice(0, 10).map((t) => (
-                <tr
-                  key={t.id}
-                  className="border-b border-white/[0.03] transition-colors hover:bg-white/[0.02]"
-                >
-                  <td className="whitespace-nowrap px-5 py-3 font-mono text-slate-500">
-                    {t.id}
-                  </td>
-                  <td className="max-w-[260px] truncate px-5 py-3 font-medium text-white">
-                    {t.title}
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-slate-400">
-                    {t.type}
-                  </td>
-                  <td className="px-5 py-3">
-                    <SeverityBadge severity={t.severity} />
-                  </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-slate-400">
-                    {t.status}
-                  </td>
-                  <td className="hidden max-w-[180px] truncate px-5 py-3 text-slate-500 md:table-cell">
-                    {t.source}
-                  </td>
-                  <td className="hidden whitespace-nowrap px-5 py-3 text-slate-500 lg:table-cell">
-                    {t.region}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </motion.div>
+      {/* Controls */}
+      <Controls
+        query={query}
+        setQuery={setQuery}
+        severitySet={severitySet}
+        toggleSeverity={toggleSeverity}
+        severityCounts={sevCounts}
+        status={status}
+        setStatus={setStatus}
+        statuses={statuses}
+        type={type}
+        setType={setType}
+        types={types}
+        view={view}
+        setView={setView}
+        live={live}
+        toggleLive={toggleLive}
+        resultCount={filtered.length}
+        totalCount={threats.length}
+        hasFilters={hasFilters}
+        onClear={clearFilters}
+        onExport={exportCSV}
+      />
 
-      {/* Threat cards grid */}
-      <div>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
-          Threat Intelligence Feed
-        </h2>
+      {/* Results */}
+      {view === "list" ? (
+        <ThreatTable threats={filtered} onSelect={onSelect} />
+      ) : filtered.length === 0 ? (
+        <div className="glass-card px-5 py-16 text-center text-sm text-slate-500">
+          No threats match the current filters.
+        </div>
+      ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {sortedThreats.map((threat, i) => (
-            <ThreatCard key={threat.id} threat={threat} index={i} />
+          {filtered.map((threat, i) => (
+            <ThreatCard key={threat.id} threat={threat} index={i} onSelect={onSelect} />
           ))}
         </div>
-      </div>
+      )}
     </main>
   );
 }
