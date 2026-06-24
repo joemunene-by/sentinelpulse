@@ -15,7 +15,7 @@ export default function ThreatCard({ threat, index, onSelect }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index * 0.04, 0.4), duration: 0.35 }}
       whileHover={{ y: -3 }}
-      className={`glass-card group block w-full overflow-hidden border-l-4 p-5 text-left transition-shadow hover:glow-primary ${sev.ring} ${threat.isNew ? "ring-1 ring-secondary/40" : ""}`}
+      className={`glass-card group block w-full overflow-hidden border-l-4 p-5 text-left transition-colors ${sev.ring} ${threat.isNew ? "ring-1 ring-secondary/40" : ""}`}
     >
       {/* Header */}
       <div className="mb-3 flex items-start justify-between gap-3">

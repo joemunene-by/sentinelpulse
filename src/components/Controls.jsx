@@ -1,24 +1,37 @@
-import { FiSearch, FiGrid, FiList, FiDownload, FiPlay, FiPause, FiX, FiStar } from "react-icons/fi";
+import { useState } from "react";
+import { FiSearch, FiGrid, FiList, FiDownload, FiPlay, FiPause, FiX, FiStar, FiShare2, FiRefreshCw, FiCheck } from "react-icons/fi";
 import { SEVERITIES, severityConfig } from "../lib/threatUtils";
 
 const selectClass =
   "rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs text-slate-300 outline-none transition-colors hover:border-white/20 focus:border-primary";
 
-export default function Controls({
-  query, setQuery, inputRef,
-  severitySet, toggleSeverity, severityCounts,
-  status, setStatus, statuses,
-  type, setType, types,
-  view, setView,
-  live, toggleLive,
-  speed, setSpeed,
-  resultCount, totalCount,
-  hasFilters, onClear, onExportCSV, onExportJSON,
-  presets, onSavePreset, onApplyPreset, onDeletePreset,
-}) {
+export default function Controls(props) {
+  const {
+    query, setQuery, inputRef,
+    severitySet, toggleSeverity, severityCounts,
+    status, setStatus, statuses,
+    type, setType, types,
+    view, setView,
+    live, toggleLive,
+    speed, setSpeed,
+    source, setSource, sourceState, onRefresh,
+    resultCount, totalCount,
+    hasFilters, onClear, onExportCSV, onExportJSON, onShare,
+    presets, onSavePreset, onApplyPreset, onDeletePreset,
+  } = props;
+
+  const [shared, setShared] = useState(false);
+  const doShare = async () => {
+    const ok = await onShare();
+    if (ok) {
+      setShared(true);
+      setTimeout(() => setShared(false), 1500);
+    }
+  };
+
   return (
     <div className="glass-card space-y-3 p-4">
-      {/* Row 1: search + speed + view/live/export */}
+      {/* Row 1: search + source + feed controls + actions */}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[200px] flex-1">
           <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
@@ -31,56 +44,69 @@ export default function Controls({
           />
         </div>
 
-        <button
-          type="button"
-          onClick={toggleLive}
-          className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
-            live ? "border-sev-low/40 bg-sev-low/10 text-sev-low" : "border-white/10 bg-surface-card/60 text-slate-400 hover:border-white/20"
-          }`}
-        >
-          {live ? <FiPause className="h-3.5 w-3.5" /> : <FiPlay className="h-3.5 w-3.5" />}
-          {live ? "Live" : "Paused"}
-        </button>
-
-        <select
-          value={speed}
-          onChange={(e) => setSpeed(e.target.value)}
-          className={selectClass}
-          title="Live feed speed"
-          aria-label="Feed speed"
-        >
-          <option value="slow">Slow</option>
-          <option value="normal">Normal</option>
-          <option value="fast">Fast</option>
+        <select value={source} onChange={(e) => setSource(e.target.value)} className={selectClass} title="Data source">
+          <option value="sim">Simulated feed</option>
+          <option value="github">GitHub advisories</option>
         </select>
 
-        <div className="flex overflow-hidden rounded-lg border border-white/10">
+        {source === "sim" ? (
+          <>
+            <button
+              type="button"
+              onClick={toggleLive}
+              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
+                live ? "border-sev-low/40 bg-sev-low/10 text-sev-low" : "border-white/10 bg-surface-card/60 text-slate-400 hover:border-white/20"
+              }`}
+            >
+              {live ? <FiPause className="h-3.5 w-3.5" /> : <FiPlay className="h-3.5 w-3.5" />}
+              {live ? "Live" : "Paused"}
+            </button>
+            <select value={speed} onChange={(e) => setSpeed(e.target.value)} className={selectClass} title="Feed speed" aria-label="Feed speed">
+              <option value="slow">Slow</option>
+              <option value="normal">Normal</option>
+              <option value="fast">Fast</option>
+            </select>
+          </>
+        ) : (
           <button
             type="button"
-            onClick={() => setView("grid")}
-            className={`p-2 transition-colors ${view === "grid" ? "bg-primary/20 text-primary" : "bg-surface-card/60 text-slate-400 hover:text-white"}`}
-            aria-label="Grid view"
+            onClick={onRefresh}
+            disabled={sourceState.loading}
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-white/20 hover:text-white disabled:opacity-50"
           >
+            <FiRefreshCw className={`h-3.5 w-3.5 ${sourceState.loading ? "animate-spin" : ""}`} />
+            Refresh
+          </button>
+        )}
+
+        <div className="flex overflow-hidden rounded-lg border border-white/10">
+          <button type="button" onClick={() => setView("grid")} className={`p-2 transition-colors ${view === "grid" ? "bg-primary/20 text-primary" : "bg-surface-card/60 text-slate-400 hover:text-white"}`} aria-label="Grid view">
             <FiGrid className="h-4 w-4" />
           </button>
-          <button
-            type="button"
-            onClick={() => setView("list")}
-            className={`p-2 transition-colors ${view === "list" ? "bg-primary/20 text-primary" : "bg-surface-card/60 text-slate-400 hover:text-white"}`}
-            aria-label="List view"
-          >
+          <button type="button" onClick={() => setView("list")} className={`p-2 transition-colors ${view === "list" ? "bg-primary/20 text-primary" : "bg-surface-card/60 text-slate-400 hover:text-white"}`} aria-label="List view">
             <FiList className="h-4 w-4" />
           </button>
         </div>
 
         <div className="flex items-center overflow-hidden rounded-lg border border-white/10 text-xs">
-          <span className="flex items-center gap-1 bg-surface-card/60 px-2 py-2 text-slate-500">
-            <FiDownload className="h-3.5 w-3.5" />
-          </span>
+          <span className="flex items-center bg-surface-card/60 px-2 py-2 text-slate-500"><FiDownload className="h-3.5 w-3.5" /></span>
           <button type="button" onClick={onExportCSV} className="bg-surface-card/60 px-2 py-2 font-medium text-slate-400 transition-colors hover:text-white">CSV</button>
           <button type="button" onClick={onExportJSON} className="border-l border-white/10 bg-surface-card/60 px-2 py-2 font-medium text-slate-400 transition-colors hover:text-white">JSON</button>
         </div>
+
+        <button
+          type="button"
+          onClick={doShare}
+          className="flex items-center gap-2 rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-white/20 hover:text-white"
+        >
+          {shared ? <FiCheck className="h-3.5 w-3.5 text-sev-low" /> : <FiShare2 className="h-3.5 w-3.5" />}
+          {shared ? "Copied" : "Share"}
+        </button>
       </div>
+
+      {sourceState.error && (
+        <p className="text-[11px] text-red-400">{sourceState.error}</p>
+      )}
 
       {/* Row 2: severity chips + selects + result count */}
       <div className="flex flex-wrap items-center gap-2">
@@ -114,11 +140,7 @@ export default function Controls({
         </select>
 
         {hasFilters && (
-          <button
-            type="button"
-            onClick={onClear}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-slate-500 transition-colors hover:text-white"
-          >
+          <button type="button" onClick={onClear} className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-slate-500 transition-colors hover:text-white">
             <FiX className="h-3 w-3" />
             Clear
           </button>

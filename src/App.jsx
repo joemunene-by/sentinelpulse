@@ -64,7 +64,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen bg-surface text-slate-200">
-      <div className="app-glow pointer-events-none fixed inset-0 -z-10" />
       <Nav
         live={feed.live}
         onToggleLive={feed.toggleLive}
