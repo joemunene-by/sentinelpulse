@@ -196,19 +196,30 @@ export const mockThreats = [
   },
 ];
 
-export const threatTrendData = [
-  { date: "Mar 08", critical: 4, high: 12, medium: 18, low: 8 },
-  { date: "Mar 11", critical: 6, high: 15, medium: 22, low: 10 },
-  { date: "Mar 14", critical: 3, high: 11, medium: 19, low: 7 },
-  { date: "Mar 17", critical: 8, high: 18, medium: 25, low: 12 },
-  { date: "Mar 20", critical: 5, high: 14, medium: 20, low: 9 },
-  { date: "Mar 23", critical: 7, high: 20, medium: 28, low: 14 },
-  { date: "Mar 26", critical: 9, high: 22, medium: 30, low: 11 },
-  { date: "Mar 29", critical: 6, high: 16, medium: 24, low: 13 },
-  { date: "Apr 01", critical: 11, high: 25, medium: 32, low: 15 },
-  { date: "Apr 04", critical: 8, high: 19, medium: 27, low: 10 },
-  { date: "Apr 07", critical: 10, high: 23, medium: 29, low: 12 },
-];
+// Build the activity trend relative to today so it always ends in the
+// current month rather than a hardcoded window. Points step back from today
+// at a fixed interval, with a mild upward drift toward the present.
+function generateTrend(points = 12, stepDays = 3) {
+  const today = new Date();
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const rand = (base, spread) => Math.round(base + Math.random() * spread);
+  const out = [];
+  for (let i = points - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i * stepDays);
+    const drift = (points - i) / points; // 0 -> 1 as we approach today
+    out.push({
+      date: `${monthNames[d.getMonth()]} ${d.getDate()}`,
+      critical: rand(3 + drift * 6, 4),
+      high: rand(10 + drift * 12, 6),
+      medium: rand(16 + drift * 12, 8),
+      low: rand(7 + drift * 6, 5),
+    });
+  }
+  return out;
+}
+
+export const threatTrendData = generateTrend();
 
 export const summaryStats = {
   totalThreats: 1284,

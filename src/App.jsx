@@ -1,19 +1,40 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import Nav from "./components/Nav";
 import Dashboard from "./components/Dashboard";
 import ThreatDetail from "./components/ThreatDetail";
+import Toasts from "./components/Toasts";
 import useThreatFeed from "./hooks/useThreatFeed";
 
 export default function App() {
   const feed = useThreatFeed();
   const [selected, setSelected] = useState(null);
+  const [toasts, setToasts] = useState([]);
+  const lastTopId = useRef(null);
 
   // Priority alerts surfaced in the nav bell: anything critical or active.
   const alerts = useMemo(
     () => feed.threats.filter((t) => t.severity === "Critical" || t.status === "Active").slice(0, 8),
     [feed.threats],
   );
+
+  // Raise a toast whenever a freshly-detected critical threat arrives.
+  useEffect(() => {
+    const top = feed.threats[0];
+    if (!top || top.id === lastTopId.current) return;
+    lastTopId.current = top.id;
+    if (top.isNew && top.severity === "Critical") {
+      setToasts((prev) => [{ ...top, toastId: top.id }, ...prev].slice(0, 3));
+    }
+  }, [feed.threats]);
+
+  const dismissToast = (id) => setToasts((prev) => prev.filter((t) => t.toastId !== id));
+
+  // Update a threat in the feed and keep the open modal in sync.
+  const updateThreat = (id, patch) => {
+    feed.updateThreat(id, patch);
+    setSelected((prev) => (prev && prev.id === id ? { ...prev, ...patch } : prev));
+  };
 
   return (
     <div className="relative min-h-screen bg-surface text-slate-200">
@@ -31,8 +52,15 @@ export default function App() {
           SentinelPulse Threat Intelligence Dashboard &mdash; Built by CEO Joe Munene
         </p>
       </footer>
+      <Toasts toasts={toasts} onSelect={setSelected} onDismiss={dismissToast} />
       <AnimatePresence>
-        {selected && <ThreatDetail threat={selected} onClose={() => setSelected(null)} />}
+        {selected && (
+          <ThreatDetail
+            threat={selected}
+            onClose={() => setSelected(null)}
+            onUpdate={updateThreat}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
