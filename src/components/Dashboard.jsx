@@ -14,7 +14,7 @@ import ThreatTable from "./ThreatTable";
 import ThreatCard from "./ThreatCard";
 
 export default function Dashboard({ feed, onSelect }) {
-  const { threats, live, toggleLive, lastUpdated } = feed;
+  const { threats, totalDetected, live, toggleLive, lastUpdated } = feed;
 
   const [query, setQuery] = useState("");
   const [severitySet, setSeveritySet] = useState(() => new Set());
@@ -61,14 +61,14 @@ export default function Dashboard({ feed, onSelect }) {
     downloadFile(`sentinelpulse-${new Date().toISOString().slice(0, 10)}.csv`, threatsToCSV(filtered), "text/csv");
 
   const cards = [
-    { label: "Total Threats", value: stats.total, icon: FiShield, color: "text-primary", bg: "bg-primary/10", glow: "glow-primary" },
+    { label: "Total Threats", value: totalDetected, icon: FiShield, color: "text-primary", bg: "bg-primary/10", glow: "glow-primary", hint: `${threats.length} in view` },
     { label: "Critical Alerts", value: stats.critical, icon: FiAlertOctagon, color: "text-sev-critical", bg: "bg-sev-critical/10" },
     { label: "Active Incidents", value: stats.active, icon: FiActivity, color: "text-secondary", bg: "bg-secondary/10", glow: "glow-secondary" },
     { label: "Threat Level", value: stats.level, icon: FiTrendingUp, color: level.text, bg: "bg-white/5", hint: "Live posture" },
   ];
 
   return (
-    <main className="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6">
+    <main className="mx-auto max-w-7xl space-y-5 px-4 py-5 sm:px-6">
       {/* Hero */}
       <motion.header
         initial={{ opacity: 0, y: 12 }}
@@ -118,7 +118,7 @@ export default function Dashboard({ feed, onSelect }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5 }}
         >
-          <SeverityDonut threats={threats} />
+          <SeverityDonut threats={threats} total={totalDetected} />
         </motion.div>
       </div>
 

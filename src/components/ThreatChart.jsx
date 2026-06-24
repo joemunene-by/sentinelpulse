@@ -35,7 +35,7 @@ export default function ThreatChart() {
       <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
         Threat Activity Trend
       </h2>
-      <div className="h-72">
+      <div className="h-60">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={threatTrendData}>
             <defs>

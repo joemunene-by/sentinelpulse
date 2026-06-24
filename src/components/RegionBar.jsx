@@ -12,14 +12,14 @@ function BarTip({ active, payload }) {
 }
 
 export default function RegionBar({ threats }) {
-  const data = countBy(threats, "region").slice(0, 7);
+  const data = countBy(threats, "region").slice(0, 6);
 
   return (
     <div className="glass-card p-5">
       <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
         Threats by Region
       </h2>
-      <div className="h-56">
+      <div className="h-44">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
             <XAxis type="number" hide />
