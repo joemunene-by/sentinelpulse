@@ -62,6 +62,19 @@ export function severityCounts(threats) {
   return Object.fromEntries(SEVERITIES.map((s) => [s, threats.filter((t) => t.severity === s).length]));
 }
 
+// Counts per type, broken down by severity, for the stacked bar chart.
+export function typeSeverityData(threats) {
+  const map = new Map();
+  for (const t of threats) {
+    if (!map.has(t.type)) map.set(t.type, { type: t.type, Critical: 0, High: 0, Medium: 0, Low: 0 });
+    const row = map.get(t.type);
+    if (row[t.severity] !== undefined) row[t.severity] += 1;
+  }
+  return [...map.values()].sort(
+    (a, b) => b.Critical + b.High + b.Medium + b.Low - (a.Critical + a.High + a.Medium + a.Low),
+  );
+}
+
 export function severityDistribution(threats) {
   return SEVERITIES.map((name) => ({
     name,

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { FiShield, FiAlertOctagon, FiActivity, FiTrendingUp, FiClock } from "react-icons/fi";
 import {
@@ -10,12 +10,13 @@ import StatCard from "./StatCard";
 import ThreatChart from "./ThreatChart";
 import SeverityDonut from "./SeverityDonut";
 import RegionBar from "./RegionBar";
+import TypeStack from "./TypeStack";
 import Controls from "./Controls";
 import ThreatTable from "./ThreatTable";
 import ThreatCard from "./ThreatCard";
 
 export default function Dashboard({ feed, onSelect }) {
-  const { threats, totalDetected, live, toggleLive, speed, setSpeed, lastUpdated } = feed;
+  const { threats, totalDetected, live, toggleLive, speed, setSpeed, lastUpdated, source, setSource, sourceState, refresh } = feed;
 
   // Filters + view persist across reloads.
   const [query, setQuery] = usePersistentState("sp:query", "");
@@ -32,6 +33,20 @@ export default function Dashboard({ feed, onSelect }) {
   const sevCounts = useMemo(() => severityCounts(threats), [threats]);
   const types = useMemo(() => [...new Set(threats.map((t) => t.type))].sort(), [threats]);
   const statuses = useMemo(() => [...new Set(threats.map((t) => t.status))].sort(), [threats]);
+
+  // Stat-card deltas: compare current values against a baseline refreshed
+  // every 30s, so each card shows movement over the last window.
+  const statsRef = useRef({ critical: 0, active: 0, total: 0 });
+  statsRef.current = { critical: stats.critical, active: stats.active, total: totalDetected };
+  const [baseline, setBaseline] = useState(null);
+  useEffect(() => {
+    setBaseline({ ...statsRef.current });
+    const id = setInterval(() => setBaseline({ ...statsRef.current }), 30000);
+    return () => clearInterval(id);
+  }, []);
+  const deltas = baseline
+    ? { critical: stats.critical - baseline.critical, active: stats.active - baseline.active, total: totalDetected - baseline.total }
+    : { critical: 0, active: 0, total: 0 };
 
   const filtered = useMemo(
     () =>
@@ -79,6 +94,37 @@ export default function Dashboard({ feed, onSelect }) {
   const exportCSV = () => downloadFile(`sentinelpulse-${stamp}.csv`, threatsToCSV(filtered), "text/csv");
   const exportJSON = () => downloadFile(`sentinelpulse-${stamp}.json`, threatsToJSON(filtered), "application/json");
 
+  // Apply filters encoded in the URL once on mount (shared views).
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search);
+    if ([...p.keys()].length === 0) return;
+    if (p.has("q")) setQuery(p.get("q") || "");
+    if (p.has("sev")) setSeverityArr((p.get("sev") || "").split(",").filter(Boolean));
+    if (p.has("status")) setStatus(p.get("status") || "All");
+    if (p.has("type")) setType(p.get("type") || "All");
+    if (p.has("view")) setView(p.get("view") || "grid");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Encode the current filters into the URL and copy it to the clipboard.
+  const shareView = async () => {
+    const p = new URLSearchParams();
+    if (query) p.set("q", query);
+    if (severityArr.length) p.set("sev", severityArr.join(","));
+    if (status !== "All") p.set("status", status);
+    if (type !== "All") p.set("type", type);
+    if (view !== "grid") p.set("view", view);
+    const qs = p.toString();
+    const url = `${window.location.origin}${window.location.pathname}${qs ? `?${qs}` : ""}`;
+    window.history.replaceState(null, "", url);
+    try {
+      await navigator.clipboard.writeText(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   // Keyboard shortcuts: "/" focus search, g/l switch view, p toggle live.
   useEffect(() => {
     const onKey = (e) => {
@@ -101,9 +147,9 @@ export default function Dashboard({ feed, onSelect }) {
   }, [toggleLive, setView]);
 
   const cards = [
-    { label: "Total Threats", value: totalDetected, icon: FiShield, color: "text-primary", bg: "bg-primary/10", glow: "glow-primary", hint: `${threats.length} in view` },
-    { label: "Critical Alerts", value: stats.critical, icon: FiAlertOctagon, color: "text-sev-critical", bg: "bg-sev-critical/10" },
-    { label: "Active Incidents", value: stats.active, icon: FiActivity, color: "text-secondary", bg: "bg-secondary/10", glow: "glow-secondary" },
+    { label: "Total Threats", value: totalDetected, icon: FiShield, color: "text-primary", bg: "bg-primary/10", hint: `${threats.length} in view`, delta: deltas.total },
+    { label: "Critical Alerts", value: stats.critical, icon: FiAlertOctagon, color: "text-sev-critical", bg: "bg-sev-critical/10", delta: deltas.critical },
+    { label: "Active Incidents", value: stats.active, icon: FiActivity, color: "text-secondary", bg: "bg-secondary/10", delta: deltas.active },
     { label: "Threat Level", value: stats.level, icon: FiTrendingUp, color: level.text, bg: "bg-white/5", hint: "Live posture" },
   ];
 
@@ -162,8 +208,10 @@ export default function Dashboard({ feed, onSelect }) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.5 }}
+        className="grid grid-cols-1 gap-4 lg:grid-cols-2"
       >
         <RegionBar threats={threats} />
+        <TypeStack threats={threats} />
       </motion.div>
 
       {/* Controls */}
@@ -186,12 +234,17 @@ export default function Dashboard({ feed, onSelect }) {
         toggleLive={toggleLive}
         speed={speed}
         setSpeed={setSpeed}
+        source={source}
+        setSource={setSource}
+        sourceState={sourceState}
+        onRefresh={refresh}
         resultCount={filtered.length}
         totalCount={threats.length}
         hasFilters={hasFilters}
         onClear={clearFilters}
         onExportCSV={exportCSV}
         onExportJSON={exportJSON}
+        onShare={shareView}
         presets={presets}
         onSavePreset={savePreset}
         onApplyPreset={applyPreset}
