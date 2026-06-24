@@ -20,7 +20,7 @@ function Meta({ icon: Icon, label, value, valueClass = "text-slate-200", full })
 
 // Centered modal showing the full record for one threat, with a one-click
 // IOC copy. Closes on backdrop click or Escape.
-export default function ThreatDetail({ threat, onClose }) {
+export default function ThreatDetail({ threat, onClose, onUpdate }) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -106,6 +106,25 @@ export default function ThreatDetail({ threat, onClose }) {
               <Meta icon={FiClock} label="Detected" value={format(parseISO(threat.timestamp), "MMM d, yyyy HH:mm")} />
               <Meta icon={FiRadio} label="Source" value={threat.source} full />
             </div>
+
+            {onUpdate && (
+              <div className="flex flex-wrap gap-2 pt-1">
+                <button
+                  type="button"
+                  onClick={() => onUpdate(threat.id, { status: "Investigating", isNew: false })}
+                  className="flex-1 rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs font-medium text-slate-300 transition-colors hover:border-white/20 hover:text-white"
+                >
+                  Acknowledge
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onUpdate(threat.id, { status: "Mitigated", isNew: false })}
+                  className="flex-1 rounded-lg bg-sev-low/15 px-3 py-2 text-xs font-semibold text-sev-low transition-colors hover:bg-sev-low/25"
+                >
+                  Mark mitigated
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </motion.div>

@@ -32,5 +32,10 @@ export default function useThreatFeed() {
 
   const toggleLive = useCallback(() => setLive((v) => !v), []);
 
-  return { threats, totalDetected, live, toggleLive, lastUpdated, addThreat };
+  // Patch a threat in place (used by the detail modal's status actions).
+  const updateThreat = useCallback((id, patch) => {
+    setThreats((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  }, []);
+
+  return { threats, totalDetected, live, toggleLive, lastUpdated, addThreat, updateThreat };
 }

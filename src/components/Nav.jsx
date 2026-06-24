@@ -5,6 +5,23 @@ import { severityConfig, relativeTime } from "../lib/threatUtils";
 
 export default function Nav({ live, onToggleLive, alerts = [], onSelect, lastUpdated }) {
   const [open, setOpen] = useState(false);
+  const [seen, setSeen] = useState(() => new Set());
+
+  // Alerts the user hasn't opened the panel for yet.
+  const unread = alerts.reduce((n, a) => (seen.has(a.id) ? n : n + 1), 0);
+
+  const togglePanel = () =>
+    setOpen((v) => {
+      const willOpen = !v;
+      if (willOpen) {
+        setSeen((prev) => {
+          const next = new Set(prev);
+          alerts.forEach((a) => next.add(a.id));
+          return next;
+        });
+      }
+      return willOpen;
+    });
 
   return (
     <nav className="sticky top-0 z-50 border-b border-white/5 bg-surface/80 backdrop-blur-xl">
@@ -50,14 +67,14 @@ export default function Nav({ live, onToggleLive, alerts = [], onSelect, lastUpd
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setOpen((v) => !v)}
+              onClick={togglePanel}
               className="relative rounded-lg bg-surface-card/80 p-2 text-slate-400 transition-colors hover:text-white"
               aria-label="Notifications"
             >
               <FiBell className="h-4 w-4" />
-              {alerts.length > 0 && (
+              {unread > 0 && (
                 <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-sev-critical px-1 text-[9px] font-bold text-white">
-                  {alerts.length > 9 ? "9+" : alerts.length}
+                  {unread > 9 ? "9+" : unread}
                 </span>
               )}
             </motion.button>
