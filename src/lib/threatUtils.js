@@ -70,10 +70,32 @@ export function severityDistribution(threats) {
   }));
 }
 
-// Free-text match across the human-meaningful fields.
+// Rough MITRE ATT&CK technique mapping by threat type. Indicative only.
+export const ATTACK_BY_TYPE = {
+  Phishing: { id: "T1566", name: "Phishing" },
+  Ransomware: { id: "T1486", name: "Data Encrypted for Impact" },
+  APT: { id: "T1071", name: "Application Layer Protocol" },
+  DDoS: { id: "T1498", name: "Network Denial of Service" },
+  Exploit: { id: "T1190", name: "Exploit Public-Facing Application" },
+  Malware: { id: "T1059", name: "Command and Scripting Interpreter" },
+  "Credential Theft": { id: "T1110", name: "Brute Force" },
+  "Supply Chain": { id: "T1195", name: "Supply Chain Compromise" },
+  Network: { id: "T1040", name: "Network Sniffing" },
+  Cryptojacking: { id: "T1496", name: "Resource Hijacking" },
+  "Insider Threat": { id: "T1530", name: "Data from Cloud Storage" },
+  "Watering Hole": { id: "T1189", name: "Drive-by Compromise" },
+};
+
+export function attackFor(type) {
+  return ATTACK_BY_TYPE[type] || null;
+}
+
+// Free-text match across the human-meaningful fields, including the mapped
+// ATT&CK technique id/name so searching "T1566" or "phishing" works.
 export function matchesQuery(threat, q) {
   if (!q) return true;
-  const hay = `${threat.id} ${threat.title} ${threat.type} ${threat.source} ${threat.region} ${threat.ioc} ${threat.status}`.toLowerCase();
+  const tech = ATTACK_BY_TYPE[threat.type];
+  const hay = `${threat.id} ${threat.title} ${threat.type} ${threat.source} ${threat.region} ${threat.ioc} ${threat.status} ${tech ? `${tech.id} ${tech.name}` : ""}`.toLowerCase();
   return hay.includes(q.toLowerCase());
 }
 
@@ -92,6 +114,15 @@ export function threatsToCSV(threats) {
   const esc = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows = threats.map((t) => cols.map((c) => esc(t[c])).join(","));
   return [cols.join(","), ...rows].join("\n");
+}
+
+export function threatsToJSON(threats) {
+  // Drop the transient `isNew` UI flag from the export.
+  return JSON.stringify(
+    threats.map(({ isNew, ...rest }) => rest),
+    null,
+    2,
+  );
 }
 
 // Compact relative timestamp, e.g. "3m ago", "just now".

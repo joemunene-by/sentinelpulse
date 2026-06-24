@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { mockThreats, makeRandomThreat } from "../data/mockThreats";
 
 const MAX_THREATS = 40; // visible window; the running total is tracked separately
-const TICK_MS = 4500;
+const SPEED_MS = { slow: 9000, normal: 4500, fast: 2000 };
 
 // Owns the live threat list and the simulated real-time feed. When `live`,
 // a synthetic threat is prepended on each tick and the oldest is dropped.
@@ -12,6 +12,7 @@ export default function useThreatFeed() {
   // performance, but this keeps climbing so the headline metric stays live.
   const [totalDetected, setTotalDetected] = useState(mockThreats.length);
   const [live, setLive] = useState(true);
+  const [speed, setSpeed] = useState("normal");
   const [lastUpdated, setLastUpdated] = useState(() => Date.now());
   const timer = useRef(null);
 
@@ -26,9 +27,9 @@ export default function useThreatFeed() {
 
   useEffect(() => {
     if (!live) return undefined;
-    timer.current = setInterval(addThreat, TICK_MS);
+    timer.current = setInterval(addThreat, SPEED_MS[speed] ?? SPEED_MS.normal);
     return () => clearInterval(timer.current);
-  }, [live, addThreat]);
+  }, [live, speed, addThreat]);
 
   const toggleLive = useCallback(() => setLive((v) => !v), []);
 
@@ -37,5 +38,5 @@ export default function useThreatFeed() {
     setThreats((prev) => prev.map((t) => (t.id === id ? { ...t, ...patch } : t)));
   }, []);
 
-  return { threats, totalDetected, live, toggleLive, lastUpdated, addThreat, updateThreat };
+  return { threats, totalDetected, live, toggleLive, speed, setSpeed, lastUpdated, addThreat, updateThreat };
 }

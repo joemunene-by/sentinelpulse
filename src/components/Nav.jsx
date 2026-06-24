@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiShield, FiActivity, FiBell } from "react-icons/fi";
+import { FiShield, FiActivity, FiBell, FiVolume2, FiVolumeX } from "react-icons/fi";
 import { severityConfig, relativeTime } from "../lib/threatUtils";
 
-export default function Nav({ live, onToggleLive, alerts = [], onSelect, lastUpdated }) {
+export default function Nav({ live, onToggleLive, alerts = [], onSelect, lastUpdated, soundOn, onToggleSound }) {
   const [open, setOpen] = useState(false);
   const [seen, setSeen] = useState(() => new Set());
 
@@ -61,6 +61,18 @@ export default function Nav({ live, onToggleLive, alerts = [], onSelect, lastUpd
           >
             <FiActivity className={`h-3.5 w-3.5 ${live ? "animate-pulse" : ""}`} />
             <span className="hidden sm:inline">{live ? "Live Feed" : "Paused"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onToggleSound}
+            className={`rounded-lg p-2 transition-colors ${
+              soundOn ? "bg-secondary/10 text-secondary" : "bg-surface-card/80 text-slate-400 hover:text-white"
+            }`}
+            title={soundOn ? "Alert sound on" : "Alert sound off"}
+            aria-label="Toggle alert sound"
+          >
+            {soundOn ? <FiVolume2 className="h-4 w-4" /> : <FiVolumeX className="h-4 w-4" />}
           </button>
 
           <div className="relative">

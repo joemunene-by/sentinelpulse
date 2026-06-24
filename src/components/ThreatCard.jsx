@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { FiClock, FiMapPin, FiTag, FiAlertTriangle } from "react-icons/fi";
 import { format, parseISO } from "date-fns";
-import { severityConfig, statusColors } from "../lib/threatUtils";
+import { severityConfig, statusColors, attackFor } from "../lib/threatUtils";
 
 // A single threat tile. Clicking opens the detail modal via onSelect.
 export default function ThreatCard({ threat, index, onSelect }) {
@@ -30,6 +30,9 @@ export default function ThreatCard({ threat, index, onSelect }) {
               <span className="rounded-full bg-secondary/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-secondary">
                 New
               </span>
+            )}
+            {attackFor(threat.type) && (
+              <span className="ml-auto font-mono text-[9px] text-slate-600">{attackFor(threat.type).id}</span>
             )}
           </div>
           <h3 className="text-sm font-semibold leading-snug text-white transition-colors group-hover:text-primary">

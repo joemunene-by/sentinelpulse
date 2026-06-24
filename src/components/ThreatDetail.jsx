@@ -4,7 +4,7 @@ import {
   FiX, FiCopy, FiCheck, FiClock, FiMapPin, FiTag, FiRadio, FiActivity,
 } from "react-icons/fi";
 import { format, parseISO } from "date-fns";
-import { severityConfig, statusColors } from "../lib/threatUtils";
+import { severityConfig, statusColors, attackFor } from "../lib/threatUtils";
 
 function Meta({ icon: Icon, label, value, valueClass = "text-slate-200", full }) {
   return (
@@ -31,6 +31,7 @@ export default function ThreatDetail({ threat, onClose, onUpdate }) {
 
   if (!threat) return null;
   const sev = severityConfig[threat.severity] || severityConfig.Medium;
+  const tech = attackFor(threat.type);
 
   const copy = async () => {
     try {
@@ -98,6 +99,16 @@ export default function ThreatDetail({ threat, onClose, onUpdate }) {
                 </button>
               </div>
             </div>
+
+            {tech && (
+              <div>
+                <p className="mb-1 text-[10px] uppercase tracking-wider text-slate-500">MITRE ATT&CK</p>
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-secondary/30 bg-secondary/10 px-2.5 py-1 text-[11px] font-medium">
+                  <span className="font-mono text-secondary">{tech.id}</span>
+                  <span className="text-slate-400">{tech.name}</span>
+                </span>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3 text-xs">
               <Meta icon={FiActivity} label="Status" value={threat.status} valueClass={statusColors[threat.status] || "text-slate-200"} />
