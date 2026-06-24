@@ -68,7 +68,7 @@ export default function Dashboard({ feed, onSelect }) {
   ];
 
   return (
-    <main className="mx-auto max-w-7xl space-y-5 px-4 py-5 sm:px-6">
+    <main className="space-y-5 px-4 py-5 sm:px-6 lg:px-8">
       {/* Hero */}
       <motion.header
         initial={{ opacity: 0, y: 12 }}
@@ -162,7 +162,7 @@ export default function Dashboard({ feed, onSelect }) {
           No threats match the current filters.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           {filtered.map((threat, i) => (
             <ThreatCard key={threat.id} threat={threat} index={i} onSelect={onSelect} />
           ))}
