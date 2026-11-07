@@ -5,27 +5,27 @@ export const SEVERITIES = ["Critical", "High", "Medium", "Low"];
 export const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3 };
 
 export const severityConfig = {
-  Critical: { text: "text-sev-critical", bg: "bg-sev-critical/15", border: "border-sev-critical/30", dot: "bg-sev-critical", ring: "border-l-sev-critical", hex: "#ef4444" },
-  High: { text: "text-sev-high", bg: "bg-sev-high/15", border: "border-sev-high/30", dot: "bg-sev-high", ring: "border-l-sev-high", hex: "#f97316" },
-  Medium: { text: "text-sev-medium", bg: "bg-sev-medium/15", border: "border-sev-medium/30", dot: "bg-sev-medium", ring: "border-l-sev-medium", hex: "#eab308" },
-  Low: { text: "text-sev-low", bg: "bg-sev-low/15", border: "border-sev-low/30", dot: "bg-sev-low", ring: "border-l-sev-low", hex: "#22c55e" },
+  Critical: { text: "text-crit font-semibold", bars: 4, hex: "#e0625c" },
+  High: { text: "text-ink font-semibold", bars: 3, hex: "#c9cdd2" },
+  Medium: { text: "text-ink-2 font-medium", bars: 2, hex: "#80868f" },
+  Low: { text: "text-ink-3", bars: 1, hex: "#646b74" },
 };
 
+// Open work reads strongest; closed work recedes. Red stays reserved for severity.
 export const statusColors = {
-  Active: "text-sev-critical",
-  Monitoring: "text-secondary",
-  Investigating: "text-sev-medium",
-  Mitigated: "text-sev-low",
-  Remediated: "text-slate-400",
-  Patched: "text-slate-400",
+  Active: "text-ink font-semibold",
+  Investigating: "text-ink font-medium",
+  Monitoring: "text-ink-2",
+  Mitigated: "text-ink-3",
+  Remediated: "text-ink-3",
+  Patched: "text-ink-3",
 };
 
-// Threat-level styling keyed off the derived posture label.
 export const levelConfig = {
-  SEVERE: { text: "text-sev-critical", dot: "bg-sev-critical" },
-  ELEVATED: { text: "text-sev-high", dot: "bg-sev-high" },
-  GUARDED: { text: "text-sev-medium", dot: "bg-sev-medium" },
-  LOW: { text: "text-sev-low", dot: "bg-sev-low" },
+  SEVERE: { text: "text-crit", bars: 4 },
+  ELEVATED: { text: "text-ink", bars: 3 },
+  GUARDED: { text: "text-ink", bars: 2 },
+  LOW: { text: "text-ink", bars: 1 },
 };
 
 const weight = { Critical: 10, High: 5, Medium: 2, Low: 1 };
