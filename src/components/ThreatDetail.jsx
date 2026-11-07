@@ -85,7 +85,7 @@ export default function ThreatDetail({ threat, onClose, onUpdate }) {
           <div className="mt-6 border-y-2 border-ink py-3">
             <p className="label">Indicator of compromise</p>
             <div className="mt-2 flex items-center gap-3">
-              <code className="min-w-0 flex-1 break-all font-mono text-base text-ink">{threat.ioc}</code>
+              <code className="min-w-0 flex-1 font-mono text-base text-ink [overflow-wrap:anywhere]">{threat.ioc}</code>
               <button onClick={copy} className="btn shrink-0 px-3" aria-label="Copy indicator">
                 {copied ? <FiCheck className="h-4 w-4" /> : <FiCopy className="h-4 w-4" />}
                 {copied ? "Copied" : "Copy"}

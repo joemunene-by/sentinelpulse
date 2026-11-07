@@ -116,7 +116,7 @@ export default function Headline({ threats, totalDetected, level, lead, loading,
 
             <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 border-t border-rule pt-4 sm:grid-cols-4">
               <Fact label="Indicator" className="col-span-2">
-                <span className="block break-all font-mono text-sm">{lead.ioc}</span>
+                <span className="block font-mono text-sm [overflow-wrap:anywhere]">{lead.ioc}</span>
               </Fact>
               <Fact label="ATT&CK">
                 {tech ? <><span className="font-mono">{tech.id}</span> <span className="text-ink-2">{tech.name}</span></> : <span className="text-ink-3">Not mapped</span>}
