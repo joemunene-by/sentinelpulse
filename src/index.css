@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0c0d0f;
-  --color-panel: #131518;
-  --color-raised: #1b1e22;
-  --color-hover: #23272c;
-  --color-line: #262a30;
-  --color-line-strong: #363b43;
-  --color-ink: #eceef0;
-  --color-ink-2: #a9aeb6;
-  --color-ink-3: #80868f;
-  --color-on-ink: #0c0d0f;
-  --color-crit: #e0625c;
+  --color-paper: #f4f2ed;
+  --color-paper-2: #ece9e2;
+  --color-paper-3: #dfdbd1;
+  --color-sheet: #fbfaf7;
+  --color-rule: #d3cec3;
+  --color-rule-strong: #8f8a7e;
+  --color-ink: #16150f;
+  --color-ink-2: #45423a;
+  --color-ink-3: #68645a;
+  --color-on-ink: #f4f2ed;
+  --color-signal: #b93d0c;
 
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-head: "Archivo", "IBM Plex Sans", system-ui, sans-serif;
 
   --text-xs: 12px;
   --text-xs--line-height: 16px;
@@ -22,29 +23,70 @@
   --text-sm--line-height: 20px;
   --text-base: 14px;
   --text-base--line-height: 20px;
-  --text-lg: 16px;
+  --text-md: 16px;
+  --text-md--line-height: 24px;
+  --text-lg: 20px;
   --text-lg--line-height: 24px;
-  --text-xl: 20px;
+  --text-lg--letter-spacing: -0.005em;
+  --text-xl: 26px;
   --text-xl--line-height: 28px;
-  --text-2xl: 24px;
-  --text-2xl--line-height: 32px;
-  --text-stat: 28px;
-  --text-stat--line-height: 32px;
+  --text-xl--letter-spacing: -0.01em;
+  --text-2xl: 34px;
+  --text-2xl--line-height: 36px;
+  --text-2xl--letter-spacing: -0.015em;
+  --text-3xl: 46px;
+  --text-3xl--line-height: 44px;
+  --text-3xl--letter-spacing: -0.02em;
+  --text-4xl: 60px;
+  --text-4xl--line-height: 56px;
+  --text-4xl--letter-spacing: -0.025em;
 
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
 
-  --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 16px rgb(0 0 0 / 0.35);
-  --shadow-modal: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 32px rgb(0 0 0 / 0.45);
+  --shadow-pop: 0 1px 2px rgb(22 21 15 / 0.1), 0 6px 16px rgb(22 21 15 / 0.1);
+  --shadow-modal: 0 2px 4px rgb(22 21 15 / 0.1), 0 16px 32px rgb(22 21 15 / 0.16);
 }
 
-/* Kept inside the base layer: an unlayered reset here would beat every
-   Tailwind padding and margin utility. */
 @layer base {
-  html {
+  :root[data-theme="dark"] {
+    --color-paper: #16150f;
+    --color-paper-2: #201f19;
+    --color-paper-3: #2b2a23;
+    --color-sheet: #211f1a;
+    --color-rule: #35332b;
+    --color-rule-strong: #77736a;
+    --color-ink: #eeebe3;
+    --color-ink-2: #c4bfb3;
+    --color-ink-3: #9e998d;
+    --color-on-ink: #16150f;
+    --color-signal: #f08a4b;
+    --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 16px rgb(0 0 0 / 0.4);
+    --shadow-modal: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 32px rgb(0 0 0 / 0.5);
     color-scheme: dark;
-    background-color: var(--color-bg);
+  }
+
+  /* Before the inline script in index.html runs, fall back to the OS setting. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --color-paper: #16150f;
+      --color-paper-2: #201f19;
+      --color-paper-3: #2b2a23;
+      --color-sheet: #211f1a;
+      --color-rule: #35332b;
+      --color-rule-strong: #77736a;
+      --color-ink: #eeebe3;
+      --color-ink-2: #c4bfb3;
+      --color-ink-3: #9e998d;
+      --color-on-ink: #16150f;
+      --color-signal: #f08a4b;
+      color-scheme: dark;
+    }
+  }
+
+  html {
+    color-scheme: light;
+    background-color: var(--color-paper);
     -webkit-text-size-adjust: 100%;
   }
 
@@ -52,38 +94,61 @@
     font-family: var(--font-sans);
     font-size: var(--text-base);
     line-height: var(--text-base--line-height);
-    background-color: var(--color-bg);
+    background-color: var(--color-paper);
     color: var(--color-ink);
     min-height: 100vh;
+    font-variant-numeric: tabular-nums;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
+  p {
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
   :focus-visible {
-    outline: 2px solid var(--color-ink-2);
+    outline: 2px solid var(--color-ink);
     outline-offset: 2px;
   }
 
   ::selection {
-    background-color: var(--color-line-strong);
-    color: var(--color-ink);
+    background-color: var(--color-ink);
+    color: var(--color-on-ink);
   }
 }
 
 @layer components {
-  .panel {
-    background-color: var(--color-panel);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
+  .head {
+    font-family: var(--font-head);
+    font-stretch: 78%;
+    font-weight: 800;
+    font-optical-sizing: auto;
   }
 
   .label {
+    font-family: var(--font-mono);
     font-size: var(--text-xs);
     line-height: var(--text-xs--line-height);
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    font-weight: 500;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--color-ink-3);
+  }
+
+  .rule-top {
+    border-top: 2px solid var(--color-ink);
+  }
+
+  .nameplate-rule {
+    height: 7px;
+    border-top: 4px solid var(--color-ink);
+    border-bottom: 1px solid var(--color-ink);
   }
 
   .btn {
@@ -93,18 +158,18 @@
     gap: 8px;
     height: 40px;
     padding: 0 16px;
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-base);
     font-weight: 500;
     white-space: nowrap;
-    background-color: var(--color-raised);
+    background-color: var(--color-paper-2);
     color: var(--color-ink);
     transition: background-color 120ms ease, transform 80ms ease;
     cursor: pointer;
   }
 
   .btn:hover {
-    background-color: var(--color-hover);
+    background-color: var(--color-paper-3);
   }
 
   .btn:active:not(:disabled) {
@@ -117,17 +182,28 @@
   }
 
   .btn:disabled:hover {
-    background-color: var(--color-raised);
+    background-color: var(--color-paper-2);
   }
 
-  .btn-primary {
+  .btn-primary,
+  .btn-on {
     background-color: var(--color-ink);
     color: var(--color-on-ink);
     font-weight: 600;
   }
 
-  .btn-primary:hover {
-    background-color: #f7f8f9;
+  .btn-primary:hover,
+  .btn-on:hover {
+    background-color: var(--color-ink-2);
+  }
+
+  .btn-primary:disabled {
+    background-color: var(--color-paper-3);
+    color: var(--color-ink-3);
+  }
+
+  .btn-primary:disabled:hover {
+    background-color: var(--color-paper-3);
   }
 
   .btn-icon {
@@ -135,27 +211,27 @@
     padding: 0;
   }
 
-  .btn-on {
-    background-color: var(--color-ink);
-    color: var(--color-on-ink);
+  .btn-quiet {
+    background-color: transparent;
   }
 
-  .btn-on:hover {
-    background-color: var(--color-ink);
+  .btn-quiet:hover {
+    background-color: var(--color-paper-2);
   }
 
   .field {
     height: 40px;
-    border-radius: var(--radius-md);
-    background-color: var(--color-raised);
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background-color: var(--color-paper-2);
     color: var(--color-ink);
-    font-size: var(--text-sm);
-    border: 1px solid transparent;
+    font-size: var(--text-base);
+    border: 0;
+    border-bottom: 1px solid var(--color-rule-strong);
     transition: border-color 120ms ease;
   }
 
   .field:hover {
-    border-color: var(--color-line-strong);
+    border-bottom-color: var(--color-ink);
   }
 
   .field::placeholder {
@@ -164,11 +240,15 @@
 
   select.field {
     appearance: none;
-    padding: 0 36px 0 12px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a9aeb6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    padding: 0 32px 0 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2368645a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-position: right 10px center;
     cursor: pointer;
+  }
+
+  [data-theme="dark"] select.field {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239e998d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   }
 
   .kbd {
@@ -177,7 +257,7 @@
     line-height: 16px;
     padding: 0 4px;
     border-radius: var(--radius-sm);
-    border: 1px solid var(--color-line-strong);
+    border: 1px solid var(--color-rule-strong);
     color: var(--color-ink-3);
   }
 }
@@ -185,6 +265,10 @@
 @layer utilities {
   .tnum {
     font-variant-numeric: tabular-nums;
+  }
+
+  .measure {
+    max-width: 66ch;
   }
 }
 
@@ -195,7 +279,7 @@
 }
 
 @keyframes arrive {
-  from { background-color: var(--color-hover); }
+  from { background-color: var(--color-paper-3); }
   to { background-color: transparent; }
 }
 
@@ -210,18 +294,4 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-line-strong);
-  border-radius: 4px;
 }
