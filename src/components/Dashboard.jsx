@@ -1,51 +1,43 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  computeStats, severityCounts, matchesQuery, levelConfig,
+  computeStats, severityCounts, matchesQuery, pickLead,
   threatsToCSV, threatsToJSON, downloadFile,
 } from "../lib/threatUtils";
 import usePersistentState from "../hooks/usePersistentState";
-import StatCard from "./StatCard";
-import ThreatChart from "./ThreatChart";
-import SeverityDonut from "./SeverityDonut";
-import RegionBar from "./RegionBar";
-import TypeStack from "./TypeStack";
+import Headline from "./Headline";
 import Controls from "./Controls";
-import ThreatTable from "./ThreatTable";
-import ThreatCard from "./ThreatCard";
-import Ago from "./Ago";
+import Wire from "./Wire";
+import Clippings from "./Clippings";
+import Rail from "./Rail";
 
-export default function Dashboard({ feed, onSelect }) {
-  const { threats, totalDetected, live, toggleLive, speed, setSpeed, lastUpdated, source, setSource, sourceState, refresh } = feed;
+export default function Dashboard({ feed, onSelect, onUpdate }) {
+  const { threats, toggleLive, sourceState, refresh, source } = feed;
 
-  // Filters + view persist across reloads.
   const [query, setQuery] = usePersistentState("sp:query", "");
   const [severityArr, setSeverityArr] = usePersistentState("sp:sev", []);
   const [status, setStatus] = usePersistentState("sp:status", "All");
   const [type, setType] = usePersistentState("sp:type", "All");
-  const [view, setView] = usePersistentState("sp:view", "grid");
+  const [view, setView] = usePersistentState("sp:layout", "list");
+  const [sort, setSort] = usePersistentState("sp:order", "time:1");
   const [presets, setPresets] = usePersistentState("sp:presets", []);
+  const [pinnedId, setPinnedId] = useState(null);
   const searchRef = useRef(null);
 
   const severitySet = useMemo(() => new Set(severityArr), [severityArr]);
-
   const stats = useMemo(() => computeStats(threats), [threats]);
   const sevCounts = useMemo(() => severityCounts(threats), [threats]);
   const types = useMemo(() => [...new Set(threats.map((t) => t.type))].sort(), [threats]);
   const statuses = useMemo(() => [...new Set(threats.map((t) => t.status))].sort(), [threats]);
 
-  // Stat-card deltas: compare current values against a baseline refreshed
-  // every 30s, so each card shows movement over the last window.
-  const statsRef = useRef({ critical: 0, active: 0, total: 0 });
-  statsRef.current = { critical: stats.critical, active: stats.active, total: totalDetected };
-  const [baseline, setBaseline] = useState(null);
-  useEffect(() => {
-    setBaseline({ ...statsRef.current });
-    const id = setInterval(() => setBaseline({ ...statsRef.current }), 30000);
-    return () => clearInterval(id);
-  }, []);
-  const deltas = baseline
-    ? { critical: stats.critical - baseline.critical, active: stats.active - baseline.active, total: totalDetected - baseline.total }
-    : { critical: 0, active: 0, total: 0 };
+  // The lead stays put after it is acted on, so the reader sees the result before moving on.
+  const autoLead = useMemo(() => pickLead(threats), [threats]);
+  const pinned = pinnedId ? threats.find((t) => t.id === pinnedId) : null;
+  const lead = pinned || autoLead;
+  const updateLead = (id, patch) => {
+    setPinnedId(id);
+    onUpdate(id, patch);
+  };
+  const nextLead = pinned && autoLead && autoLead.id !== pinned.id ? () => setPinnedId(null) : null;
 
   const filtered = useMemo(
     () =>
@@ -59,7 +51,6 @@ export default function Dashboard({ feed, onSelect }) {
     [threats, query, severitySet, status, type],
   );
 
-  const level = levelConfig[stats.level] || levelConfig.LOW;
   const hasFilters = Boolean(query) || severityArr.length > 0 || status !== "All" || type !== "All";
 
   const toggleSeverity = (sev) =>
@@ -72,9 +63,8 @@ export default function Dashboard({ feed, onSelect }) {
     setType("All");
   };
 
-  // Filter presets (named snapshots) persisted to localStorage.
   const savePreset = () => {
-    const name = window.prompt("Save current filters as preset. Name:");
+    const name = window.prompt("Name this preset");
     const trimmed = name && name.trim();
     if (!trimmed) return;
     const preset = { name: trimmed, query, severity: severityArr, status, type, view };
@@ -85,7 +75,7 @@ export default function Dashboard({ feed, onSelect }) {
     setSeverityArr(p.severity || []);
     setStatus(p.status || "All");
     setType(p.type || "All");
-    setView(p.view || "grid");
+    setView(p.view || "list");
   };
   const deletePreset = (name) => setPresets((prev) => prev.filter((p) => p.name !== name));
 
@@ -93,7 +83,6 @@ export default function Dashboard({ feed, onSelect }) {
   const exportCSV = () => downloadFile(`sentinelpulse-${stamp}.csv`, threatsToCSV(filtered), "text/csv");
   const exportJSON = () => downloadFile(`sentinelpulse-${stamp}.json`, threatsToJSON(filtered), "application/json");
 
-  // Apply filters encoded in the URL once on mount (shared views).
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
     if ([...p.keys()].length === 0) return;
@@ -101,18 +90,17 @@ export default function Dashboard({ feed, onSelect }) {
     if (p.has("sev")) setSeverityArr((p.get("sev") || "").split(",").filter(Boolean));
     if (p.has("status")) setStatus(p.get("status") || "All");
     if (p.has("type")) setType(p.get("type") || "All");
-    if (p.has("view")) setView(p.get("view") || "grid");
+    if (p.has("view")) setView(p.get("view") === "grid" ? "grid" : "list");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Encode the current filters into the URL and copy it to the clipboard.
   const shareView = async () => {
     const p = new URLSearchParams();
     if (query) p.set("q", query);
     if (severityArr.length) p.set("sev", severityArr.join(","));
     if (status !== "All") p.set("status", status);
     if (type !== "All") p.set("type", type);
-    if (view !== "grid") p.set("view", view);
+    if (view !== "list") p.set("view", view);
     const qs = p.toString();
     const url = `${window.location.origin}${window.location.pathname}${qs ? `?${qs}` : ""}`;
     window.history.replaceState(null, "", url);
@@ -124,12 +112,13 @@ export default function Dashboard({ feed, onSelect }) {
     }
   };
 
-  // Keyboard shortcuts: "/" focus search, g/l switch view, p toggle live.
+  // "/" focuses search, g and l switch layout, p pauses or resumes the feed.
   useEffect(() => {
     const onKey = (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
       const tag = (e.target.tagName || "").toLowerCase();
-      const typing = tag === "input" || tag === "textarea" || tag === "select" || e.target.isContentEditable;
-      if (typing) return;
+      if (tag === "input" || tag === "textarea" || tag === "select" || e.target.isContentEditable) return;
+      if (document.querySelector("[role=dialog]")) return;
       if (e.key === "/") {
         e.preventDefault();
         searchRef.current?.focus();
@@ -145,134 +134,106 @@ export default function Dashboard({ feed, onSelect }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [toggleLive, setView]);
 
-  const cards = [
-    { label: "Total threats", value: totalDetected, hint: `${threats.length} in view`, delta: deltas.total },
-    { label: "Critical alerts", value: stats.critical, valueClass: stats.critical > 0 ? "text-crit" : "text-ink", hint: "In view", delta: deltas.critical },
-    { label: "Active incidents", value: stats.active, hint: "Open and unmitigated", delta: deltas.active },
-    { label: "Threat level", value: stats.level, valueClass: level.text, bars: level.bars, hint: "Weighted by severity in view" },
-  ];
+  const loading = sourceState.loading;
 
-  const speedNote = { slow: "9s", normal: "4.5s", fast: "2s" }[speed] || "4.5s";
-  const subtitle =
-    source === "github"
-      ? "Latest published GitHub security advisories, mapped to threats."
-      : live
-        ? `Simulated feed. A new threat arrives every ${speedNote}.`
-        : "Simulated feed, paused. Press p or Resume to continue.";
-
-  const emptyState = (
-    <div className="px-4 py-12 sm:px-6">
-      <p className="text-base font-semibold text-ink">
-        {hasFilters ? "No threats match these filters" : "No threats in view yet"}
-      </p>
-      <p className="mt-1 text-sm text-ink-2">
+  const empty = (
+    <div className="py-12">
+      <p className="head text-lg">{hasFilters ? "Nothing on the wire matches these filters." : "The wire is quiet."}</p>
+      <p className="mt-2 text-base text-ink-2">
         {hasFilters
-          ? "Widen the search or clear the filters to see the full feed."
-          : "New detections will appear here as the feed delivers them."}
+          ? "Widen the search or clear the filters to see every report."
+          : "New reports appear here as the feed delivers them."}
       </p>
-      {hasFilters && (
-        <button type="button" onClick={clearFilters} className="btn mt-4">Clear filters</button>
-      )}
+      {hasFilters && <button type="button" onClick={clearFilters} className="btn btn-primary mt-4">Clear filters</button>}
     </div>
   );
 
   let results;
-  if (sourceState.loading) {
+  if (loading) {
     results = (
-      <section className="panel" aria-busy="true">
-        <p className="border-b border-line px-4 py-3 text-sm text-ink-2 sm:px-6">Loading GitHub advisories</p>
-        {[0, 1, 2, 3, 4].map((i) => (
-          <div key={i} className="flex items-center gap-4 border-b border-line px-4 py-4 last:border-b-0 sm:px-6">
-            <span className="h-3 w-16 rounded-sm bg-raised" />
-            <span className="h-3 flex-1 rounded-sm bg-raised" />
-            <span className="hidden h-3 w-24 rounded-sm bg-raised sm:block" />
-          </div>
+      <ul aria-busy="true" aria-label="Loading GitHub advisories">
+        {[0, 1, 2, 3, 4, 5].map((i) => (
+          <li key={i} className="grid grid-cols-[56px_1fr] gap-4 border-b border-rule py-4 sm:grid-cols-[64px_104px_1fr]">
+            <span className="h-3 bg-paper-3" />
+            <span className="hidden h-3 bg-paper-3 sm:block" />
+            <span className="h-3 bg-paper-3" style={{ width: `${90 - i * 9}%` }} />
+          </li>
         ))}
-      </section>
+      </ul>
     );
-  } else if (view === "list") {
-    results = <ThreatTable threats={filtered} onSelect={onSelect} empty={emptyState} />;
   } else if (filtered.length === 0) {
-    results = <section className="panel">{emptyState}</section>;
+    results = empty;
+  } else if (view === "grid") {
+    results = <Clippings threats={filtered} sort={sort} onSelect={onSelect} />;
   } else {
-    results = (
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        {filtered.map((threat) => (
-          <ThreatCard key={threat.id} threat={threat} onSelect={onSelect} />
-        ))}
-      </div>
-    );
+    results = <Wire threats={filtered} sort={sort} onSelect={onSelect} />;
   }
 
   return (
-    <main className="mx-auto max-w-[1600px] space-y-4 px-4 py-6 sm:space-y-6 sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-        <div className="min-w-0">
-          <h1 className="text-xl font-semibold tracking-[-0.01em] text-ink sm:text-2xl">Threat operations</h1>
-          <p className="mt-1 text-sm text-ink-2">{subtitle}</p>
-        </div>
-        <p className="text-xs text-ink-3">
-          Last update <Ago time={lastUpdated} className="text-ink-2" />
-        </p>
-      </header>
-
-      <section aria-label="Key metrics" className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line lg:grid-cols-4">
-        {cards.map((c) => (
-          <div key={c.label} className="bg-panel">
-            <StatCard {...c} />
-          </div>
-        ))}
-      </section>
-
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <ThreatChart />
-        </div>
-        <SeverityDonut threats={threats} total={totalDetected} />
-      </div>
-
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
-        <RegionBar threats={threats} />
-        <TypeStack threats={threats} />
-      </div>
-
-      <Controls
-        query={query}
-        setQuery={setQuery}
-        inputRef={searchRef}
-        severitySet={severitySet}
-        toggleSeverity={toggleSeverity}
-        severityCounts={sevCounts}
-        status={status}
-        setStatus={setStatus}
-        statuses={statuses}
-        type={type}
-        setType={setType}
-        types={types}
-        view={view}
-        setView={setView}
-        live={live}
-        toggleLive={toggleLive}
-        speed={speed}
-        setSpeed={setSpeed}
-        source={source}
-        setSource={setSource}
-        sourceState={sourceState}
-        onRefresh={refresh}
-        resultCount={filtered.length}
-        totalCount={threats.length}
-        hasFilters={hasFilters}
-        onClear={clearFilters}
-        onExportCSV={exportCSV}
-        onExportJSON={exportJSON}
-        onShare={shareView}
-        presets={presets}
-        onSavePreset={savePreset}
-        onApplyPreset={applyPreset}
-        onDeletePreset={deletePreset}
+    <main className="mx-auto max-w-[1440px] px-4 lg:px-8">
+      <Headline
+        threats={threats}
+        totalDetected={feed.totalDetected}
+        level={stats.level}
+        lead={lead}
+        loading={loading}
+        onUpdate={updateLead}
+        onSelect={onSelect}
+        onNext={nextLead}
       />
 
-      {results}
+      <div className="grid grid-cols-1 gap-y-12 pb-16 lg:grid-cols-12 lg:gap-x-8">
+        <section aria-labelledby="wire-title" className="min-w-0 lg:col-span-8">
+          <div className="rule-top flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pt-2">
+            <h2 id="wire-title" className="head text-xl">The wire</h2>
+            <p className="tnum text-sm text-ink-3">
+              {loading ? "Loading" : <>Showing <span className="font-semibold text-ink">{filtered.length}</span> of {threats.length}</>}
+              {source === "github" ? " GitHub advisories" : " reports"}
+            </p>
+          </div>
+
+          {sourceState.error && (
+            <div className="mt-3 flex flex-wrap items-center gap-3 border-y-2 border-ink py-3" role="alert">
+              <p className="min-w-0 flex-1 text-base text-ink">{sourceState.error}</p>
+              <button type="button" onClick={refresh} className="btn btn-primary">Try again</button>
+            </div>
+          )}
+
+          <Controls
+            query={query}
+            setQuery={setQuery}
+            inputRef={searchRef}
+            severitySet={severitySet}
+            toggleSeverity={toggleSeverity}
+            severityCounts={sevCounts}
+            status={status}
+            setStatus={setStatus}
+            statuses={statuses}
+            type={type}
+            setType={setType}
+            types={types}
+            view={view}
+            setView={setView}
+            sort={sort}
+            setSort={setSort}
+            hasFilters={hasFilters}
+            onClear={clearFilters}
+            onExportCSV={exportCSV}
+            onExportJSON={exportJSON}
+            onShare={shareView}
+            presets={presets}
+            onSavePreset={savePreset}
+            onApplyPreset={applyPreset}
+            onDeletePreset={deletePreset}
+          />
+
+          {results}
+        </section>
+
+        <div className="min-w-0 lg:col-span-4 lg:border-l lg:border-rule lg:pl-8">
+          <Rail threats={threats} github={source === "github"} />
+        </div>
+      </div>
     </main>
   );
 }

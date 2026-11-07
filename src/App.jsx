@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, MotionConfig } from "framer-motion";
-import Nav from "./components/Nav";
+import Masthead from "./components/Masthead";
 import Dashboard from "./components/Dashboard";
 import ThreatDetail from "./components/ThreatDetail";
 import Toasts from "./components/Toasts";
 import useThreatFeed from "./hooks/useThreatFeed";
 import usePersistentState from "./hooks/usePersistentState";
+import { ThemeContext, useThemeState } from "./hooks/useTheme";
 
 // Short WebAudio chirp for incoming critical alerts (no asset needed).
 function playBeep() {
@@ -32,6 +33,7 @@ function playBeep() {
 
 export default function App() {
   const feed = useThreatFeed();
+  const themeState = useThemeState();
   const [selected, setSelected] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [soundOn, setSoundOn] = usePersistentState("sp:sound", false);
@@ -62,33 +64,57 @@ export default function App() {
     setSelected((prev) => (prev && prev.id === id ? { ...prev, ...patch } : prev));
   };
 
+  const changeFeed = (value) => {
+    if (value === "github") {
+      if (feed.source !== "github") feed.setSource("github");
+      return;
+    }
+    const speed = value.split(":")[1] || "normal";
+    if (feed.source !== "sim") feed.setSource("sim");
+    feed.setSpeed(speed);
+  };
+
   return (
-    <MotionConfig reducedMotion="user">
-      <div className="relative min-h-screen bg-bg text-ink">
-        <Nav
-          live={feed.live}
-          onToggleLive={feed.toggleLive}
-          alerts={alerts}
-          onSelect={setSelected}
-          lastUpdated={feed.lastUpdated}
-          soundOn={soundOn}
-          onToggleSound={() => setSoundOn((v) => !v)}
-        />
-        <Dashboard feed={feed} onSelect={setSelected} />
-        <footer className="mx-auto max-w-[1600px] border-t border-line px-4 py-6 text-xs text-ink-3 sm:px-6 lg:px-8">
-          SentinelPulse threat intelligence dashboard · Built by CEO Joe Munene
-        </footer>
-        <Toasts toasts={toasts} onSelect={setSelected} onDismiss={dismissToast} />
-        <AnimatePresence>
-          {selected && (
-            <ThreatDetail
-              threat={selected}
-              onClose={() => setSelected(null)}
-              onUpdate={updateThreat}
-            />
-          )}
-        </AnimatePresence>
-      </div>
-    </MotionConfig>
+    <ThemeContext.Provider value={themeState}>
+      <MotionConfig reducedMotion="user">
+        <div className="relative min-h-screen bg-paper text-ink">
+          <Masthead
+            live={feed.live}
+            onToggleLive={feed.toggleLive}
+            alerts={alerts}
+            onSelect={setSelected}
+            lastUpdated={feed.lastUpdated}
+            soundOn={soundOn}
+            onToggleSound={() => setSoundOn((v) => !v)}
+            source={feed.source}
+            speed={feed.speed}
+            onFeedChange={changeFeed}
+            onRefresh={feed.refresh}
+            loading={feed.sourceState.loading}
+          />
+          <Dashboard feed={feed} onSelect={setSelected} onUpdate={updateThreat} />
+          <footer className="mx-auto max-w-[1440px] px-4 pb-8 lg:px-8">
+            <div className="flex flex-wrap justify-between gap-x-8 gap-y-2 border-t-2 border-ink pt-3 text-sm text-ink-3">
+              <p>SentinelPulse, a threat bulletin. Built by CEO Joe Munene.</p>
+              <p>
+                {feed.source === "github"
+                  ? "Reports from the public GitHub Security Advisory database."
+                  : "Simulated reports for demonstration. Switch the feed to GitHub advisories for real ones."}
+              </p>
+            </div>
+          </footer>
+          <Toasts toasts={toasts} onSelect={setSelected} onDismiss={dismissToast} />
+          <AnimatePresence>
+            {selected && (
+              <ThreatDetail
+                threat={selected}
+                onClose={() => setSelected(null)}
+                onUpdate={updateThreat}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+      </MotionConfig>
+    </ThemeContext.Provider>
   );
 }

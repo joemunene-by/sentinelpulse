@@ -16,7 +16,7 @@ function Toast({ toast, onSelect, onDismiss }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 8 }}
       transition={{ duration: 0.15 }}
-      className="flex w-full items-start gap-2 rounded-lg border border-line bg-raised py-2 pl-4 pr-2 shadow-pop sm:w-80"
+      className="flex w-full items-start gap-2 rounded-md bg-sheet py-2 pl-4 pr-2 shadow-pop sm:w-96"
       role="status"
     >
       <button
@@ -24,19 +24,19 @@ function Toast({ toast, onSelect, onDismiss }) {
         onClick={() => { onSelect(toast); onDismiss(toast.toastId); }}
         className="min-w-0 flex-1 py-1 text-left"
       >
-        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.04em] text-crit">
+        <p className="label flex items-center gap-2 text-signal">
           <LevelBars filled={4} />
           New critical threat
         </p>
-        <p className="mt-1 truncate text-sm font-semibold text-ink">{toast.title}</p>
-        <p className="truncate text-xs text-ink-3">
+        <p className="head mt-1 truncate text-lg">{toast.title}</p>
+        <p className="truncate text-sm text-ink-3">
           {toast.type} · {toast.region}
         </p>
       </button>
       <button
         type="button"
         onClick={() => onDismiss(toast.toastId)}
-        className="btn btn-icon shrink-0 bg-transparent text-ink-3 hover:text-ink"
+        className="btn btn-icon btn-quiet shrink-0 text-ink-3 hover:text-ink"
         aria-label="Dismiss"
       >
         <FiX className="h-4 w-4" />

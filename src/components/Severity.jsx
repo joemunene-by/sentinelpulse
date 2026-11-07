@@ -1,9 +1,9 @@
 import { severityConfig } from "../lib/threatUtils";
 
 // Four ascending bars, filled up to the level, so severity reads without colour.
-export function LevelBars({ filled, className = "" }) {
+export function LevelBars({ filled, size = 1, className = "" }) {
   return (
-    <svg viewBox="0 0 14 12" width="14" height="12" aria-hidden="true" className={`shrink-0 ${className}`}>
+    <svg viewBox="0 0 14 12" width={14 * size} height={12 * size} aria-hidden="true" className={`shrink-0 ${className}`}>
       {[0, 1, 2, 3].map((i) => (
         <rect
           key={i}
@@ -11,8 +11,7 @@ export function LevelBars({ filled, className = "" }) {
           y={9 - i * 3}
           width="2.5"
           height={3 + i * 3}
-          rx="0.75"
-          fill={i < filled ? "currentColor" : "var(--color-line-strong)"}
+          style={{ fill: i < filled ? "currentColor" : "var(--color-rule)" }}
         />
       ))}
     </svg>
