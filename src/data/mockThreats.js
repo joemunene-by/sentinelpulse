@@ -79,7 +79,7 @@ export const mockThreats = [
   },
   {
     id: "THR-007",
-    title: "Credential Stuffing — Major SaaS Provider",
+    title: "Credential Stuffing: Major SaaS Provider",
     type: "Credential Theft",
     severity: "High",
     source: "Internal SOC Detection",
@@ -105,7 +105,7 @@ export const mockThreats = [
   },
   {
     id: "THR-009",
-    title: "BGP Hijacking — African ISP Routes",
+    title: "BGP Hijacking: African ISP Routes",
     type: "Network",
     severity: "Medium",
     source: "RIPE NCC Alert",

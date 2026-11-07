@@ -28,11 +28,16 @@ function mapAdvisory(a) {
 
 export async function fetchGithubAdvisories(limit = 30) {
   const url = `https://api.github.com/advisories?per_page=${limit}&sort=published&direction=desc`;
-  const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+  let res;
+  try {
+    res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+  } catch {
+    throw new Error("Could not reach GitHub. Check your connection and try again.");
+  }
   if (!res.ok) {
-    throw new Error(res.status === 403 ? "GitHub API rate limit reached — try again shortly." : `GitHub API error ${res.status}`);
+    throw new Error(res.status === 403 ? "GitHub rate limit reached. Try again in a minute." : `GitHub returned an error (${res.status}). Try again shortly.`);
   }
   const data = await res.json();
-  if (!Array.isArray(data)) throw new Error("Unexpected response from GitHub API.");
+  if (!Array.isArray(data)) throw new Error("GitHub sent an unexpected response. Try again shortly.");
   return data.map(mapAdvisory);
 }
