@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { FiShield, FiAlertOctagon, FiActivity, FiTrendingUp, FiClock } from "react-icons/fi";
 import {
   computeStats, severityCounts, matchesQuery, levelConfig,
-  threatsToCSV, threatsToJSON, downloadFile, relativeTime,
+  threatsToCSV, threatsToJSON, downloadFile,
 } from "../lib/threatUtils";
 import usePersistentState from "../hooks/usePersistentState";
 import StatCard from "./StatCard";
@@ -14,6 +12,7 @@ import TypeStack from "./TypeStack";
 import Controls from "./Controls";
 import ThreatTable from "./ThreatTable";
 import ThreatCard from "./ThreatCard";
+import Ago from "./Ago";
 
 export default function Dashboard({ feed, onSelect }) {
   const { threats, totalDetected, live, toggleLive, speed, setSpeed, lastUpdated, source, setSource, sourceState, refresh } = feed;
@@ -147,74 +146,96 @@ export default function Dashboard({ feed, onSelect }) {
   }, [toggleLive, setView]);
 
   const cards = [
-    { label: "Total Threats", value: totalDetected, icon: FiShield, color: "text-primary", bg: "bg-primary/10", hint: `${threats.length} in view`, delta: deltas.total },
-    { label: "Critical Alerts", value: stats.critical, icon: FiAlertOctagon, color: "text-sev-critical", bg: "bg-sev-critical/10", delta: deltas.critical },
-    { label: "Active Incidents", value: stats.active, icon: FiActivity, color: "text-secondary", bg: "bg-secondary/10", delta: deltas.active },
-    { label: "Threat Level", value: stats.level, icon: FiTrendingUp, color: level.text, bg: "bg-white/5", hint: "Live posture" },
+    { label: "Total threats", value: totalDetected, hint: `${threats.length} in view`, delta: deltas.total },
+    { label: "Critical alerts", value: stats.critical, valueClass: stats.critical > 0 ? "text-crit" : "text-ink", hint: "In view", delta: deltas.critical },
+    { label: "Active incidents", value: stats.active, hint: "Open and unmitigated", delta: deltas.active },
+    { label: "Threat level", value: stats.level, valueClass: level.text, bars: level.bars, hint: "Weighted by severity in view" },
   ];
 
-  return (
-    <main className="space-y-5 px-4 py-5 sm:px-6 lg:px-8">
-      {/* Hero */}
-      <motion.header
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex flex-wrap items-end justify-between gap-3"
-      >
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Threat Operations</h1>
-          <p className="mt-1 text-sm text-slate-500">Real-time intelligence across global infrastructure.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 text-[11px] text-slate-500">
-            <FiClock className="h-3 w-3" />
-            Updated {relativeTime(lastUpdated)}
-          </span>
-          <span className={`flex items-center gap-2 rounded-full border border-white/10 bg-surface-card/60 px-3 py-1.5 text-xs font-semibold ${level.text}`}>
-            <span className={`h-2 w-2 rounded-full ${level.dot} ${live ? "pulse-dot" : ""}`} />
-            {stats.level}
-          </span>
-        </div>
-      </motion.header>
+  const speedNote = { slow: "9s", normal: "4.5s", fast: "2s" }[speed] || "4.5s";
+  const subtitle =
+    source === "github"
+      ? "Latest published GitHub security advisories, mapped to threats."
+      : live
+        ? `Simulated feed. A new threat arrives every ${speedNote}.`
+        : "Simulated feed, paused. Press p or Resume to continue.";
 
-      {/* Summary cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c, i) => (
-          <StatCard key={c.label} index={i} {...c} />
+  const emptyState = (
+    <div className="px-4 py-12 sm:px-6">
+      <p className="text-base font-semibold text-ink">
+        {hasFilters ? "No threats match these filters" : "No threats in view yet"}
+      </p>
+      <p className="mt-1 text-sm text-ink-2">
+        {hasFilters
+          ? "Widen the search or clear the filters to see the full feed."
+          : "New detections will appear here as the feed delivers them."}
+      </p>
+      {hasFilters && (
+        <button type="button" onClick={clearFilters} className="btn mt-4">Clear filters</button>
+      )}
+    </div>
+  );
+
+  let results;
+  if (sourceState.loading) {
+    results = (
+      <section className="panel" aria-busy="true">
+        <p className="border-b border-line px-4 py-3 text-sm text-ink-2 sm:px-6">Loading GitHub advisories</p>
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div key={i} className="flex items-center gap-4 border-b border-line px-4 py-4 last:border-b-0 sm:px-6">
+            <span className="h-3 w-16 rounded-sm bg-raised" />
+            <span className="h-3 flex-1 rounded-sm bg-raised" />
+            <span className="hidden h-3 w-24 rounded-sm bg-raised sm:block" />
+          </div>
+        ))}
+      </section>
+    );
+  } else if (view === "list") {
+    results = <ThreatTable threats={filtered} onSelect={onSelect} empty={emptyState} />;
+  } else if (filtered.length === 0) {
+    results = <section className="panel">{emptyState}</section>;
+  } else {
+    results = (
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {filtered.map((threat) => (
+          <ThreatCard key={threat.id} threat={threat} onSelect={onSelect} />
         ))}
       </div>
+    );
+  }
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="lg:col-span-2"
-        >
+  return (
+    <main className="mx-auto max-w-[1600px] space-y-4 px-4 py-6 sm:space-y-6 sm:px-6 lg:px-8">
+      <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold tracking-[-0.01em] text-ink sm:text-2xl">Threat operations</h1>
+          <p className="mt-1 text-sm text-ink-2">{subtitle}</p>
+        </div>
+        <p className="text-xs text-ink-3">
+          Last update <Ago time={lastUpdated} className="text-ink-2" />
+        </p>
+      </header>
+
+      <section aria-label="Key metrics" className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line lg:grid-cols-4">
+        {cards.map((c) => (
+          <div key={c.label} className="bg-panel">
+            <StatCard {...c} />
+          </div>
+        ))}
+      </section>
+
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
           <ThreatChart />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
-          <SeverityDonut threats={threats} total={totalDetected} />
-        </motion.div>
+        </div>
+        <SeverityDonut threats={threats} total={totalDetected} />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.45, duration: 0.5 }}
-        className="grid grid-cols-1 gap-4 lg:grid-cols-2"
-      >
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
         <RegionBar threats={threats} />
         <TypeStack threats={threats} />
-      </motion.div>
+      </div>
 
-      {/* Controls */}
       <Controls
         query={query}
         setQuery={setQuery}
@@ -251,20 +272,7 @@ export default function Dashboard({ feed, onSelect }) {
         onDeletePreset={deletePreset}
       />
 
-      {/* Results */}
-      {view === "list" ? (
-        <ThreatTable threats={filtered} onSelect={onSelect} />
-      ) : filtered.length === 0 ? (
-        <div className="glass-card px-5 py-16 text-center text-sm text-slate-500">
-          No threats match the current filters.
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-          {filtered.map((threat, i) => (
-            <ThreatCard key={threat.id} threat={threat} index={i} onSelect={onSelect} />
-          ))}
-        </div>
-      )}
+      {results}
     </main>
   );
 }
