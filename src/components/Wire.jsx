@@ -79,7 +79,7 @@ export default function Wire({ threats, sort, onSelect }) {
       {groups.map((g) => (
         <section key={g.day || "all"} aria-label={g.day || "Reports"}>
           {g.day && (
-            <h3 className="label flex items-baseline justify-between border-b border-ink pb-1 pt-6 text-ink">
+            <h3 className="dateline flex items-baseline justify-between border-b border-ink pb-1 pt-6 text-ink">
               {g.day}
               <span className="text-ink-3">{g.items.length} {g.items.length === 1 ? "report" : "reports"}</span>
             </h3>

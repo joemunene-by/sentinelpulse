@@ -54,14 +54,14 @@ Three faces with fixed jobs, loaded from Google Fonts:
 
 - **Archivo**, width axis at 78 (`font-stretch: 78%`), weight 800: headlines, section heads, the masthead name, large figures.
 - **IBM Plex Sans** 400, 500, 600: body and UI text.
-- **IBM Plex Mono** 400, 500: IDs, indicators, ATT&CK IDs, times, the dateline.
+- **IBM Plex Mono** 400, 500: IDs, indicators, ATT&CK IDs, times, and the uppercase dateline (masthead date and the day heads on the wire). Field labels are sentence case in Plex Sans, never tiny uppercase.
 
-All numbers use tabular figures. Large sizes get tight tracking, small sizes none.
+All numbers use tabular figures. Large sizes get tight tracking, small sizes none. Sizes are defined in rem (the table shows px at the default 16 px root) so the OS text size setting scales them.
 
 | Step | Size / line height | Tracking | Use |
 | --- | --- | --- | --- |
-| `xs` | 12 / 16 | 0.02em (mono) | Time gutter, IDs, dateline, labels |
-| `sm` | 13 / 20 | 0 | Row metadata, toolbar, rail rows |
+| `xs` | 12 / 16 | 0.02em (mono) | Time gutter, IDs, dateline |
+| `sm` | 13 / 20 | 0 | Row metadata, field labels, toolbar, rail rows |
 | `base` | 14 / 20 | 0 | Wire titles, controls, modal body |
 | `md` | 16 / 24 | 0 | Lead summary, modal summary |
 | `lg` | 20 / 24 | -0.005em | Rail section heads, clipping titles |
@@ -98,8 +98,8 @@ No glows, gradients, blur, grain or translucent surfaces.
 
 ## Controls
 
-- Height 40 px for every button, input and select; 32 px for the compact severity toggles inside the toolbar line on desktop. Icon buttons 40 x 40.
-- Primary button: `ink` fill, `on-ink` text. Secondary: `paper-2` fill, `ink` text. Hover goes one step darker in light and lighter in dark; press moves 1 px down. No outline-only buttons.
+- Height 40 px for every button, input, select and severity toggle. Icon buttons 40 x 40.
+- Primary button: `ink` fill, `on-ink` text, hover `ink-2`. Secondary: `paper-2` fill, `ink` text, hover `paper-3`. Quiet (toolbar and masthead icons): no fill until hover, then `paper-2`. Press moves 1 px down. No outline-only buttons.
 - Inputs and selects: `paper-2` fill with a 1 px `rule-strong` underline, like a form line on paper.
 - Selected toggle: `ink` fill, `on-ink` text.
 - Focus: 2 px `ink` outline, 2 px offset.

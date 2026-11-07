@@ -104,7 +104,7 @@ export default function Headline({ threats, totalDetected, level, lead, loading,
           loading ? <LeadSkeleton /> : <p className="text-md text-ink-2">No reports yet. The lead story appears here when the first one arrives.</p>
         ) : (
           <>
-            <p className={`label ${leadIsCritical ? "text-signal" : "text-ink"}`}>
+            <p className={`text-base font-semibold ${leadIsCritical ? "text-signal" : "text-ink"}`}>
               Lead report · {lead.severity} · {lead.status}
             </p>
             <h2 id="lead-title" className="head mt-3 text-2xl lg:text-4xl">

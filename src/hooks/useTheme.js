@@ -33,6 +33,7 @@ export function useThemeState() {
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute("content", PALETTE[theme].paper));
   }, [theme]);
 
   const toggle = useCallback(() => {

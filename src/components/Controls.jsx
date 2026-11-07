@@ -94,7 +94,7 @@ export default function Controls(props) {
 
       <div id="wire-options" className={`${more ? "flex" : "hidden"} flex-wrap items-center gap-x-2 gap-y-2 border-b border-rule py-3 sm:flex`}>
         <div className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1">
-          <span className="label mr-1">Presets</span>
+          <span className="mr-1 text-sm font-semibold text-ink">Presets</span>
           {presets.length === 0 && <span className="text-sm text-ink-3">None saved yet.</span>}
           {presets.map((p) => (
             <span key={p.name} className="inline-flex">

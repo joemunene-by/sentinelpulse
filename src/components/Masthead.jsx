@@ -159,7 +159,7 @@ export default function Masthead({
 
         <div className="flex items-center gap-1 lg:gap-2">
           <div className="mr-4 hidden text-right xl:block">
-            <p className="label">{format(now, "EEEE d MMMM yyyy, HH:mm")}</p>
+            <p className="dateline">{format(now, "EEEE d MMMM yyyy, HH:mm")}</p>
             <p className={`mt-1 text-sm ${live || github ? "font-semibold text-ink" : "text-ink-3"}`} role="status">{state}</p>
           </div>
           <FeedSelect source={source} speed={speed} onChange={onFeedChange} className="hidden w-52 lg:block" />
@@ -189,12 +189,12 @@ export default function Masthead({
 
       <div className="nameplate-rule" />
 
-      <div className="flex items-center justify-between gap-4 py-2 xl:hidden">
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 py-2 xl:hidden">
         <div className="min-w-0">
-          <p className="label truncate">{format(now, "EEE d MMM, HH:mm")}</p>
+          <p className="dateline truncate">{format(now, "EEE d MMM, HH:mm")}</p>
           <p className={`truncate text-sm ${live || github ? "font-semibold text-ink" : "text-ink-3"}`}>{state}</p>
         </div>
-        <FeedSelect source={source} speed={speed} onChange={onFeedChange} className="w-[196px] shrink-0 lg:hidden" />
+        <FeedSelect source={source} speed={speed} onChange={onFeedChange} className="min-w-[196px] flex-1 sm:flex-none lg:hidden" />
       </div>
       <div className="border-b border-rule xl:hidden" />
     </header>

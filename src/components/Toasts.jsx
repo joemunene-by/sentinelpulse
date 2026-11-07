@@ -24,7 +24,7 @@ function Toast({ toast, onSelect, onDismiss }) {
         onClick={() => { onSelect(toast); onDismiss(toast.toastId); }}
         className="min-w-0 flex-1 py-1 text-left"
       >
-        <p className="label flex items-center gap-2 text-signal">
+        <p className="flex items-center gap-2 text-sm font-semibold text-signal">
           <LevelBars filled={4} />
           New critical threat
         </p>
