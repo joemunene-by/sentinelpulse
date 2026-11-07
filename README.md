@@ -175,7 +175,7 @@ Update contact details in:
 
 ### Colors & Styling
 
-Edit `tailwind.config.js` to customize the color palette and fonts.
+Design tokens (colours, type scale, spacing, radius, elevation) are documented in `DESIGN.md` and defined in the `@theme` block of `src/index.css`.
 
 ### Mock Data
 

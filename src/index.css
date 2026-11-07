@@ -1,81 +1,227 @@
 @import "tailwindcss";
 
 @theme {
-  --color-surface: #0a0a0f;
-  --color-surface-light: #12121a;
-  --color-surface-card: #1a1a2e;
-  --color-primary: #d946ef;
-  --color-secondary: #22d3ee;
-  --color-accent: #a855f7;
-  --color-sev-critical: #ef4444;
-  --color-sev-high: #f97316;
-  --color-sev-medium: #eab308;
-  --color-sev-low: #22c55e;
-  --font-sans: "Inter", "system-ui", sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  --color-bg: #0c0d0f;
+  --color-panel: #131518;
+  --color-raised: #1b1e22;
+  --color-hover: #23272c;
+  --color-line: #262a30;
+  --color-line-strong: #363b43;
+  --color-ink: #eceef0;
+  --color-ink-2: #a9aeb6;
+  --color-ink-3: #80868f;
+  --color-on-ink: #0c0d0f;
+  --color-crit: #e0625c;
+
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 20px;
+  --text-base: 14px;
+  --text-base--line-height: 20px;
+  --text-lg: 16px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-stat: 28px;
+  --text-stat--line-height: 32px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  --shadow-pop: 0 1px 2px rgb(0 0 0 / 0.5), 0 8px 16px rgb(0 0 0 / 0.35);
+  --shadow-modal: 0 2px 4px rgb(0 0 0 / 0.5), 0 16px 32px rgb(0 0 0 / 0.45);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Kept inside the base layer: an unlayered reset here would beat every
+   Tailwind padding and margin utility. */
+@layer base {
+  html {
+    color-scheme: dark;
+    background-color: var(--color-bg);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ink-2);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-line-strong);
+    color: var(--color-ink);
+  }
 }
 
-html {
-  color-scheme: dark;
+@layer components {
+  .panel {
+    background-color: var(--color-panel);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+  }
+
+  .label {
+    font-size: var(--text-xs);
+    line-height: var(--text-xs--line-height);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    background-color: var(--color-raised);
+    color: var(--color-ink);
+    transition: background-color 120ms ease, transform 80ms ease;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    background-color: var(--color-hover);
+  }
+
+  .btn:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .btn:disabled {
+    cursor: not-allowed;
+    color: var(--color-ink-3);
+  }
+
+  .btn:disabled:hover {
+    background-color: var(--color-raised);
+  }
+
+  .btn-primary {
+    background-color: var(--color-ink);
+    color: var(--color-on-ink);
+    font-weight: 600;
+  }
+
+  .btn-primary:hover {
+    background-color: #f7f8f9;
+  }
+
+  .btn-icon {
+    width: 40px;
+    padding: 0;
+  }
+
+  .btn-on {
+    background-color: var(--color-ink);
+    color: var(--color-on-ink);
+  }
+
+  .btn-on:hover {
+    background-color: var(--color-ink);
+  }
+
+  .field {
+    height: 40px;
+    border-radius: var(--radius-md);
+    background-color: var(--color-raised);
+    color: var(--color-ink);
+    font-size: var(--text-sm);
+    border: 1px solid transparent;
+    transition: border-color 120ms ease;
+  }
+
+  .field:hover {
+    border-color: var(--color-line-strong);
+  }
+
+  .field::placeholder {
+    color: var(--color-ink-3);
+  }
+
+  select.field {
+    appearance: none;
+    padding: 0 36px 0 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a9aeb6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    cursor: pointer;
+  }
+
+  .kbd {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 16px;
+    padding: 0 4px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-line-strong);
+    color: var(--color-ink-3);
+  }
 }
 
-body {
-  font-family: var(--font-sans);
-  background-color: var(--color-surface);
-  color: #e2e8f0;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@layer utilities {
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Recharts focuses the SVG surface on click and draws a default outline. */
+.recharts-wrapper svg:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+@keyframes arrive {
+  from { background-color: var(--color-hover); }
+  to { background-color: transparent; }
+}
+
+.animate-arrive {
+  animation: arrive 1.8s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-.glass-card {
-  background: rgba(20, 20, 28, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-}
-
-.glass-card:hover {
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.pulse-dot {
-  animation: pulse-ring 2s ease-in-out infinite;
-}
-
-@keyframes pulse-ring {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.5); }
-}
-
-/* Brief tint when a freshly-detected threat row arrives in the live feed. */
-@keyframes flash {
-  0% { background-color: rgba(34, 211, 238, 0.16); }
-  100% { background-color: transparent; }
-}
-
-.animate-flash {
-  animation: flash 1.8s ease-out;
+  background: var(--color-line-strong);
+  border-radius: 4px;
 }
