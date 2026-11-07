@@ -10,6 +10,21 @@ const SEVERITY_MAP = {
   low: "Low",
 };
 
+// Advisory bodies are Markdown; the bulletin shows them as plain prose, cut at a sentence.
+function plainSummary(md, limit = 480) {
+  const text = String(md || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/^#{1,6}\s*(summary|details|description|impact|overview)?\s*$/gim, " ")
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/[`*>#]+|__/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  const end = cut.lastIndexOf(". ");
+  return end > limit / 3 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(" "))}.`;
+}
+
 function mapAdvisory(a) {
   const ref = Array.isArray(a.references) && a.references.length ? a.references[0]?.url : null;
   return {
@@ -19,7 +34,7 @@ function mapAdvisory(a) {
     severity: SEVERITY_MAP[(a.severity || "").toLowerCase()] || "Medium",
     source: "GitHub Advisory",
     timestamp: a.published_at || a.updated_at || new Date().toISOString(),
-    description: (a.description || a.summary || "No description provided.").slice(0, 600),
+    description: plainSummary(a.description || a.summary) || "GitHub published no description for this advisory.",
     ioc: a.cve_id || ref || a.ghsa_id || "n/a",
     status: "Monitoring",
     region: "Global",
