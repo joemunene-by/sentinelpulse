@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
+const reducedMotion = () =>
+  typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
 // Animate a number from its previous value to `target` with an ease-out
 // curve. Returns the current displayed value.
-export default function useCountUp(target, duration = 900) {
+export default function useCountUp(target, duration = 600) {
   const [value, setValue] = useState(target);
   const fromRef = useRef(target);
   const rafRef = useRef(0);
@@ -10,6 +13,11 @@ export default function useCountUp(target, duration = 900) {
   useEffect(() => {
     const from = fromRef.current;
     if (from === target) return;
+    if (reducedMotion()) {
+      fromRef.current = target;
+      setValue(target);
+      return;
+    }
     const start = performance.now();
     cancelAnimationFrame(rafRef.current);
 

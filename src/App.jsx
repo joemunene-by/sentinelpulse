@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, MotionConfig } from "framer-motion";
 import Nav from "./components/Nav";
 import Dashboard from "./components/Dashboard";
 import ThreatDetail from "./components/ThreatDetail";
@@ -63,32 +63,32 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen bg-surface text-slate-200">
-      <Nav
-        live={feed.live}
-        onToggleLive={feed.toggleLive}
-        alerts={alerts}
-        onSelect={setSelected}
-        lastUpdated={feed.lastUpdated}
-        soundOn={soundOn}
-        onToggleSound={() => setSoundOn((v) => !v)}
-      />
-      <Dashboard feed={feed} onSelect={setSelected} />
-      <footer className="border-t border-white/5 py-6 text-center text-xs text-slate-600">
-        <p>
-          SentinelPulse Threat Intelligence Dashboard &mdash; Built by CEO Joe Munene
-        </p>
-      </footer>
-      <Toasts toasts={toasts} onSelect={setSelected} onDismiss={dismissToast} />
-      <AnimatePresence>
-        {selected && (
-          <ThreatDetail
-            threat={selected}
-            onClose={() => setSelected(null)}
-            onUpdate={updateThreat}
-          />
-        )}
-      </AnimatePresence>
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="relative min-h-screen bg-bg text-ink">
+        <Nav
+          live={feed.live}
+          onToggleLive={feed.toggleLive}
+          alerts={alerts}
+          onSelect={setSelected}
+          lastUpdated={feed.lastUpdated}
+          soundOn={soundOn}
+          onToggleSound={() => setSoundOn((v) => !v)}
+        />
+        <Dashboard feed={feed} onSelect={setSelected} />
+        <footer className="mx-auto max-w-[1600px] border-t border-line px-4 py-6 text-xs text-ink-3 sm:px-6 lg:px-8">
+          SentinelPulse threat intelligence dashboard · Built by CEO Joe Munene
+        </footer>
+        <Toasts toasts={toasts} onSelect={setSelected} onDismiss={dismissToast} />
+        <AnimatePresence>
+          {selected && (
+            <ThreatDetail
+              threat={selected}
+              onClose={() => setSelected(null)}
+              onUpdate={updateThreat}
+            />
+          )}
+        </AnimatePresence>
+      </div>
+    </MotionConfig>
   );
 }
