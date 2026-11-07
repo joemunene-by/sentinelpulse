@@ -1,45 +1,26 @@
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, LabelList, CartesianGrid } from "recharts";
 import { countBy } from "../lib/threatUtils";
-
-function BarTip({ active, payload }) {
-  if (!active || !payload?.length) return null;
-  return (
-    <div className="glass-card px-3 py-2 text-xs">
-      <span className="font-semibold text-white">{payload[0].payload.name}</span>
-      <span className="ml-2 text-slate-400">{payload[0].value} threats</span>
-    </div>
-  );
-}
+import { PanelHeader, ChartTip, axisTick, gridStroke } from "./ChartParts";
 
 export default function RegionBar({ threats }) {
   const data = countBy(threats, "region").slice(0, 6);
 
   return (
-    <div className="glass-card p-5">
-      <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
-        Threats by Region
-      </h2>
-      <div className="h-44">
+    <section className="panel p-4 sm:p-6">
+      <PanelHeader title="Threats by region" subtitle={`Top ${data.length} regions, count of threats in view`} />
+      <div className="h-52">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16, top: 4, bottom: 4 }}>
-            <XAxis type="number" hide />
-            <YAxis
-              type="category"
-              dataKey="name"
-              width={96}
-              tick={{ fill: "#94a3b8", fontSize: 11 }}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip cursor={{ fill: "rgba(255,255,255,0.04)" }} content={<BarTip />} />
-            <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={16}>
-              {data.map((_, i) => (
-                <Cell key={i} fill="#d946ef" fillOpacity={Math.max(0.35, 0.9 - i * 0.09)} />
-              ))}
+          <BarChart data={data} layout="vertical" margin={{ left: 0, right: 32, top: 0, bottom: 0 }}>
+            <CartesianGrid stroke={gridStroke} horizontal={false} />
+            <XAxis type="number" tick={axisTick} axisLine={false} tickLine={false} allowDecimals={false} />
+            <YAxis type="category" dataKey="name" width={120} tick={axisTick} axisLine={false} tickLine={false} />
+            <Tooltip cursor={{ fill: "rgba(236,238,240,0.04)" }} content={<ChartTip />} />
+            <Bar dataKey="value" name="Threats" fill="#a9aeb6" radius={[0, 2, 2, 0]} barSize={16} isAnimationActive={false}>
+              <LabelList dataKey="value" position="right" fill="#eceef0" fontSize={12} />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </section>
   );
 }

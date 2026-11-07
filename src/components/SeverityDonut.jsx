@@ -1,57 +1,47 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { severityDistribution } from "../lib/threatUtils";
+import { PanelHeader } from "./ChartParts";
+import Severity from "./Severity";
 
-function DonutTip({ active, payload, windowTotal }) {
-  if (!active || !payload?.length) return null;
-  const d = payload[0];
-  const pct = windowTotal ? Math.round((d.value / windowTotal) * 100) : 0;
-  return (
-    <div className="glass-card px-3 py-2 text-xs">
-      <span className="font-semibold text-white">{d.name}</span>
-      <span className="ml-2 text-slate-400">{pct}%</span>
-    </div>
-  );
-}
-
-// `total` is the running cumulative count shown in the center; the ring and
-// legend show the live severity proportions of the current window.
+// A 100% stacked bar plus a labelled breakdown: every value is readable
+// without hovering. `total` is the running count of everything detected.
 export default function SeverityDonut({ threats, total }) {
-  const data = severityDistribution(threats).filter((d) => d.value > 0);
+  const data = severityDistribution(threats);
   const windowTotal = data.reduce((s, d) => s + d.value, 0);
-  const center = total ?? windowTotal;
+  const pct = (v) => (windowTotal ? Math.round((v / windowTotal) * 100) : 0);
 
   return (
-    <div className="glass-card p-5">
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wider text-slate-400">
-        Severity Mix
-      </h2>
-      <div className="relative h-44">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie data={data} dataKey="value" nameKey="name" innerRadius={50} outerRadius={72} paddingAngle={3} stroke="none">
-              {data.map((d) => (
-                <Cell key={d.name} fill={d.hex} />
-              ))}
-            </Pie>
-            <Tooltip content={<DonutTip windowTotal={windowTotal} />} />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold tabular-nums text-white">{center.toLocaleString()}</span>
-          <span className="text-[10px] uppercase tracking-widest text-slate-500">Threats</span>
-        </div>
-      </div>
-      <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
-        {data.map((d) => (
-          <span key={d.name} className="flex items-center gap-1.5 text-[11px] text-slate-400">
-            <span className="h-2 w-2 rounded-full" style={{ backgroundColor: d.hex }} />
-            {d.name}
-            <span className="text-slate-600">
-              {windowTotal ? Math.round((d.value / windowTotal) * 100) : 0}%
-            </span>
-          </span>
+    <section className="panel h-full p-4 sm:p-6">
+      <PanelHeader
+        title="Severity mix"
+        subtitle={`Share of the ${windowTotal} threats in view`}
+        aside={
+          <>
+            <p className="tnum text-xl font-semibold text-ink">{(total ?? windowTotal).toLocaleString()}</p>
+            <p className="text-xs text-ink-3">detected in total</p>
+          </>
+        }
+      />
+
+      <div className="flex h-3 w-full gap-0.5 overflow-hidden rounded-sm bg-raised" role="img" aria-label="Severity share">
+        {data.filter((d) => d.value > 0).map((d) => (
+          <span key={d.name} style={{ width: `${(d.value / windowTotal) * 100}%`, backgroundColor: d.hex }} />
         ))}
       </div>
-    </div>
+
+      <table className="mt-4 w-full text-sm">
+        <thead className="sr-only">
+          <tr><th>Severity</th><th>Count</th><th>Share</th></tr>
+        </thead>
+        <tbody>
+          {data.map((d) => (
+            <tr key={d.name} className="border-b border-line last:border-b-0">
+              <td className="py-2"><Severity level={d.name} /></td>
+              <td className="tnum py-2 text-right text-ink">{d.value}</td>
+              <td className="tnum w-16 py-2 text-right text-ink-3">{pct(d.value)}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
   );
 }
