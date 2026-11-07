@@ -10,6 +10,21 @@ const SEVERITY_MAP = {
   low: "Low",
 };
 
+// Advisory bodies are Markdown; the bulletin shows them as plain prose, cut at a sentence.
+function plainSummary(md, limit = 480) {
+  const text = String(md || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/^#{1,6}\s*(summary|details|description|impact|overview)?\s*$/gim, " ")
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/[`*>#]+|__/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (text.length <= limit) return text;
+  const cut = text.slice(0, limit);
+  const end = cut.lastIndexOf(". ");
+  return end > limit / 3 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(" "))}.`;
+}
+
 function mapAdvisory(a) {
   const ref = Array.isArray(a.references) && a.references.length ? a.references[0]?.url : null;
   return {
@@ -19,7 +34,7 @@ function mapAdvisory(a) {
     severity: SEVERITY_MAP[(a.severity || "").toLowerCase()] || "Medium",
     source: "GitHub Advisory",
     timestamp: a.published_at || a.updated_at || new Date().toISOString(),
-    description: (a.description || a.summary || "No description provided.").slice(0, 600),
+    description: plainSummary(a.description || a.summary) || "GitHub published no description for this advisory.",
     ioc: a.cve_id || ref || a.ghsa_id || "n/a",
     status: "Monitoring",
     region: "Global",
@@ -28,11 +43,16 @@ function mapAdvisory(a) {
 
 export async function fetchGithubAdvisories(limit = 30) {
   const url = `https://api.github.com/advisories?per_page=${limit}&sort=published&direction=desc`;
-  const res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+  let res;
+  try {
+    res = await fetch(url, { headers: { Accept: "application/vnd.github+json" } });
+  } catch {
+    throw new Error("Could not reach GitHub. Check your connection and try again.");
+  }
   if (!res.ok) {
-    throw new Error(res.status === 403 ? "GitHub API rate limit reached — try again shortly." : `GitHub API error ${res.status}`);
+    throw new Error(res.status === 403 ? "GitHub rate limit reached. Try again in a minute." : `GitHub returned an error (${res.status}). Try again shortly.`);
   }
   const data = await res.json();
-  if (!Array.isArray(data)) throw new Error("Unexpected response from GitHub API.");
+  if (!Array.isArray(data)) throw new Error("GitHub sent an unexpected response. Try again shortly.");
   return data.map(mapAdvisory);
 }

@@ -1,26 +1,22 @@
 import { useState } from "react";
-import { FiSearch, FiGrid, FiList, FiDownload, FiPlay, FiPause, FiX, FiStar, FiShare2, FiRefreshCw, FiCheck } from "react-icons/fi";
+import { FiSearch, FiDownload, FiX, FiShare2, FiCheck, FiChevronDown } from "react-icons/fi";
 import { SEVERITIES, severityConfig } from "../lib/threatUtils";
+import { SORTS } from "./Wire";
 
-const selectClass =
-  "rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs text-slate-300 outline-none transition-colors hover:border-white/20 focus:border-primary";
-
+// The wire's filter and output line: plain controls on the paper, split by hairlines.
 export default function Controls(props) {
   const {
     query, setQuery, inputRef,
     severitySet, toggleSeverity, severityCounts,
     status, setStatus, statuses,
     type, setType, types,
-    view, setView,
-    live, toggleLive,
-    speed, setSpeed,
-    source, setSource, sourceState, onRefresh,
-    resultCount, totalCount,
+    view, setView, sort, setSort,
     hasFilters, onClear, onExportCSV, onExportJSON, onShare,
     presets, onSavePreset, onApplyPreset, onDeletePreset,
   } = props;
 
   const [shared, setShared] = useState(false);
+  const [more, setMore] = useState(false);
   const doShare = async () => {
     const ok = await onShare();
     if (ok) {
@@ -30,149 +26,129 @@ export default function Controls(props) {
   };
 
   return (
-    <div className="glass-card space-y-3 p-4">
-      {/* Row 1: search + source + feed controls + actions */}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[200px] flex-1">
-          <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+    <div aria-label="Filters" role="region">
+      <div className="flex flex-wrap items-center gap-2 border-b border-rule py-3">
+        <label className="relative min-w-0 flex-[1_1_100%] xl:flex-[1_1_200px]">
+          <span className="sr-only">Search threats</span>
+          <FiSearch className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-3" />
           <input
             ref={inputRef}
+            type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search threats, IOCs, ATT&CK techniques…  ( / )"
-            className="w-full rounded-lg border border-white/10 bg-surface-card/60 py-2 pl-9 pr-3 text-sm text-slate-200 outline-none transition-colors placeholder:text-slate-600 hover:border-white/20 focus:border-primary"
+            placeholder="Search titles, IOCs, ATT&CK IDs"
+            title="Matches ID, title, type, source, region, IOC, status and ATT&CK technique"
+            className="field w-full pl-9 pr-10 text-md outline-none sm:text-base"
           />
+          <span className="kbd pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 sm:inline">/</span>
+        </label>
+
+        <div className="grid w-full grid-cols-4 gap-1 sm:flex sm:w-auto" role="group" aria-label="Filter by severity">
+          {SEVERITIES.map((sev) => {
+            const on = severitySet.has(sev);
+            const cfg = severityConfig[sev];
+            return (
+              <button
+                key={sev}
+                type="button"
+                onClick={() => toggleSeverity(sev)}
+                aria-pressed={on}
+                title={`${on ? "Remove" : "Show only"} ${sev}`}
+                className={`btn gap-1.5 px-2 sm:px-2.5 ${on ? "btn-on" : "btn-quiet"}`}
+              >
+                <span className={on ? "" : cfg.text}>{sev}</span>
+                <span className={`tnum ${on ? "" : "text-ink-3"}`}>{severityCounts[sev] ?? 0}</span>
+              </button>
+            );
+          })}
         </div>
 
-        <select value={source} onChange={(e) => setSource(e.target.value)} className={selectClass} title="Data source">
-          <option value="sim">Simulated feed</option>
-          <option value="github">GitHub advisories</option>
-        </select>
-
-        {source === "sim" ? (
-          <>
-            <button
-              type="button"
-              onClick={toggleLive}
-              className={`flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium transition-colors ${
-                live ? "border-sev-low/40 bg-sev-low/10 text-sev-low" : "border-white/10 bg-surface-card/60 text-slate-400 hover:border-white/20"
-              }`}
-            >
-              {live ? <FiPause className="h-3.5 w-3.5" /> : <FiPlay className="h-3.5 w-3.5" />}
-              {live ? "Live" : "Paused"}
-            </button>
-            <select value={speed} onChange={(e) => setSpeed(e.target.value)} className={selectClass} title="Feed speed" aria-label="Feed speed">
-              <option value="slow">Slow</option>
-              <option value="normal">Normal</option>
-              <option value="fast">Fast</option>
-            </select>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={sourceState.loading}
-            className="flex items-center gap-2 rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-white/20 hover:text-white disabled:opacity-50"
-          >
-            <FiRefreshCw className={`h-3.5 w-3.5 ${sourceState.loading ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
-        )}
-
-        <div className="flex overflow-hidden rounded-lg border border-white/10">
-          <button type="button" onClick={() => setView("grid")} className={`p-2 transition-colors ${view === "grid" ? "bg-primary/20 text-primary" : "bg-surface-card/60 text-slate-400 hover:text-white"}`} aria-label="Grid view">
-            <FiGrid className="h-4 w-4" />
-          </button>
-          <button type="button" onClick={() => setView("list")} className={`p-2 transition-colors ${view === "list" ? "bg-primary/20 text-primary" : "bg-surface-card/60 text-slate-400 hover:text-white"}`} aria-label="List view">
-            <FiList className="h-4 w-4" />
-          </button>
-        </div>
-
-        <div className="flex items-center overflow-hidden rounded-lg border border-white/10 text-xs">
-          <span className="flex items-center bg-surface-card/60 px-2 py-2 text-slate-500"><FiDownload className="h-3.5 w-3.5" /></span>
-          <button type="button" onClick={onExportCSV} className="bg-surface-card/60 px-2 py-2 font-medium text-slate-400 transition-colors hover:text-white">CSV</button>
-          <button type="button" onClick={onExportJSON} className="border-l border-white/10 bg-surface-card/60 px-2 py-2 font-medium text-slate-400 transition-colors hover:text-white">JSON</button>
-        </div>
-
-        <button
-          type="button"
-          onClick={doShare}
-          className="flex items-center gap-2 rounded-lg border border-white/10 bg-surface-card/60 px-3 py-2 text-xs font-medium text-slate-400 transition-colors hover:border-white/20 hover:text-white"
-        >
-          {shared ? <FiCheck className="h-3.5 w-3.5 text-sev-low" /> : <FiShare2 className="h-3.5 w-3.5" />}
-          {shared ? "Copied" : "Share"}
-        </button>
-      </div>
-
-      {sourceState.error && (
-        <p className="text-[11px] text-red-400">{sourceState.error}</p>
-      )}
-
-      {/* Row 2: severity chips + selects + result count */}
-      <div className="flex flex-wrap items-center gap-2">
-        {SEVERITIES.map((sev) => {
-          const cfg = severityConfig[sev];
-          const on = severitySet.has(sev);
-          return (
-            <button
-              key={sev}
-              type="button"
-              onClick={() => toggleSeverity(sev)}
-              className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase transition-all ${
-                on ? `${cfg.bg} ${cfg.text} ${cfg.border}` : "border-white/10 text-slate-500 hover:border-white/20"
-              }`}
-            >
-              <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
-              {sev}
-              <span className="text-slate-500">{severityCounts[sev] ?? 0}</span>
-            </button>
-          );
-        })}
-
-        <select value={status} onChange={(e) => setStatus(e.target.value)} className={selectClass}>
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="field min-w-0 flex-1 sm:flex-none" aria-label="Status">
           <option value="All">All statuses</option>
           {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
 
-        <select value={type} onChange={(e) => setType(e.target.value)} className={selectClass}>
+        <select value={type} onChange={(e) => setType(e.target.value)} className="field min-w-0 flex-1 sm:flex-none" aria-label="Type">
           <option value="All">All types</option>
           {types.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
 
         {hasFilters && (
-          <button type="button" onClick={onClear} className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] text-slate-500 transition-colors hover:text-white">
-            <FiX className="h-3 w-3" />
-            Clear
+          <button type="button" onClick={onClear} className="btn btn-quiet w-full px-3 sm:w-auto">
+            <FiX className="h-4 w-4" />
+            Clear filters
           </button>
         )}
-
-        <span className="ml-auto text-[11px] text-slate-500">
-          Showing <span className="font-semibold text-slate-300">{resultCount}</span> of {totalCount}
-        </span>
       </div>
 
-      {/* Row 3: presets */}
-      <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3">
-        <span className="text-[11px] uppercase tracking-wider text-slate-500">Presets</span>
-        {presets.map((p) => (
-          <span key={p.name} className="flex items-center gap-1 rounded-full border border-white/10 bg-surface-card/60 py-1 pl-2.5 pr-1 text-[11px]">
-            <button type="button" onClick={() => onApplyPreset(p)} className="text-slate-300 transition-colors hover:text-white">{p.name}</button>
-            <button type="button" onClick={() => onDeletePreset(p.name)} className="text-slate-600 transition-colors hover:text-red-400" aria-label={`Delete preset ${p.name}`}>
-              <FiX className="h-3 w-3" />
-            </button>
-          </span>
-        ))}
-        {presets.length === 0 && <span className="text-[11px] text-slate-600">none saved</span>}
-        <button
-          type="button"
-          onClick={onSavePreset}
-          disabled={!hasFilters}
-          className="ml-auto flex items-center gap-1 rounded-lg border border-white/10 px-2.5 py-1 text-[11px] text-slate-400 transition-colors hover:border-white/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-          title={hasFilters ? "Save the current filters as a preset" : "Set some filters first"}
-        >
-          <FiStar className="h-3 w-3" />
-          Save current
-        </button>
+      <button
+        type="button"
+        onClick={() => setMore((v) => !v)}
+        aria-expanded={more}
+        aria-controls="wire-options"
+        className="flex h-11 w-full items-center justify-between border-b border-rule text-sm text-ink-2 sm:hidden"
+      >
+        <span>Presets, order, layout and export</span>
+        <FiChevronDown className={`h-4 w-4 transition-transform ${more ? "rotate-180" : ""}`} />
+      </button>
+
+      <div id="wire-options" className={`${more ? "flex" : "hidden"} flex-wrap items-center gap-x-2 gap-y-2 border-b border-rule py-3 sm:flex`}>
+        <div className="flex w-full min-w-0 flex-wrap items-center gap-2 lg:w-auto lg:flex-1">
+          <span className="mr-1 text-sm font-semibold text-ink">Presets</span>
+          {presets.length === 0 && <span className="text-sm text-ink-3">None saved yet.</span>}
+          {presets.map((p) => (
+            <span key={p.name} className="inline-flex">
+              <button type="button" onClick={() => onApplyPreset(p)} className="btn rounded-r-none px-3" title="Apply preset">
+                {p.name}
+              </button>
+              <button
+                type="button"
+                onClick={() => onDeletePreset(p.name)}
+                className="btn btn-icon rounded-l-none border-l border-paper text-ink-3 hover:text-ink"
+                aria-label={`Delete preset ${p.name}`}
+              >
+                <FiX className="h-4 w-4" />
+              </button>
+            </span>
+          ))}
+          <button
+            type="button"
+            onClick={onSavePreset}
+            disabled={!hasFilters}
+            className="btn btn-quiet px-3 underline decoration-rule-strong underline-offset-4 disabled:no-underline"
+            title={hasFilters ? "Save the current filters as a preset" : "Set a filter first"}
+          >
+            Save current
+          </button>
+        </div>
+
+        <select value={sort} onChange={(e) => setSort(e.target.value)} className="field min-w-0 flex-1 sm:flex-none" aria-label="Order">
+          {SORTS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+
+        <div className="flex" role="group" aria-label="Layout">
+          <button type="button" onClick={() => setView("list")} aria-pressed={view === "list"} className={`btn rounded-r-none px-3 ${view === "list" ? "btn-on" : ""}`} title="Wire layout (l)">
+            Wire
+          </button>
+          <button type="button" onClick={() => setView("grid")} aria-pressed={view === "grid"} className={`btn rounded-l-none px-3 ${view === "grid" ? "btn-on" : ""}`} title="Clippings layout (g)">
+            Clippings
+          </button>
+        </div>
+
+        <span className="flex w-full gap-2 sm:w-auto">
+          <button type="button" onClick={onExportCSV} className="btn btn-quiet flex-1 px-3" title="Download the filtered threats as CSV">
+            <FiDownload className="h-4 w-4" />
+            CSV
+          </button>
+          <button type="button" onClick={onExportJSON} className="btn btn-quiet flex-1 px-3" title="Download the filtered threats as JSON">
+            <FiDownload className="h-4 w-4" />
+            JSON
+          </button>
+          <button type="button" onClick={doShare} className="btn btn-quiet flex-1 px-3" title="Copy a link to this view" aria-label="Share this view">
+            {shared ? <FiCheck className="h-4 w-4" /> : <FiShare2 className="h-4 w-4" />}
+            {shared ? "Link copied" : "Share"}
+          </button>
+        </span>
       </div>
     </div>
   );

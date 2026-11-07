@@ -5,28 +5,85 @@ export const SEVERITIES = ["Critical", "High", "Medium", "Low"];
 export const severityOrder = { Critical: 0, High: 1, Medium: 2, Low: 3 };
 
 export const severityConfig = {
-  Critical: { text: "text-sev-critical", bg: "bg-sev-critical/15", border: "border-sev-critical/30", dot: "bg-sev-critical", ring: "border-l-sev-critical", hex: "#ef4444" },
-  High: { text: "text-sev-high", bg: "bg-sev-high/15", border: "border-sev-high/30", dot: "bg-sev-high", ring: "border-l-sev-high", hex: "#f97316" },
-  Medium: { text: "text-sev-medium", bg: "bg-sev-medium/15", border: "border-sev-medium/30", dot: "bg-sev-medium", ring: "border-l-sev-medium", hex: "#eab308" },
-  Low: { text: "text-sev-low", bg: "bg-sev-low/15", border: "border-sev-low/30", dot: "bg-sev-low", ring: "border-l-sev-low", hex: "#22c55e" },
+  Critical: { text: "text-signal font-semibold", bars: 4 },
+  High: { text: "text-ink font-semibold", bars: 3 },
+  Medium: { text: "text-ink-2 font-medium", bars: 2 },
+  Low: { text: "text-ink-3", bars: 1 },
 };
 
+// Open work reads strongest; closed work recedes. The signal colour stays reserved for severity.
 export const statusColors = {
-  Active: "text-sev-critical",
-  Monitoring: "text-secondary",
-  Investigating: "text-sev-medium",
-  Mitigated: "text-sev-low",
-  Remediated: "text-slate-400",
-  Patched: "text-slate-400",
+  Active: "text-ink font-semibold",
+  Investigating: "text-ink font-medium",
+  Monitoring: "text-ink-2",
+  Mitigated: "text-ink-3",
+  Remediated: "text-ink-3",
+  Patched: "text-ink-3",
 };
 
-// Threat-level styling keyed off the derived posture label.
 export const levelConfig = {
-  SEVERE: { text: "text-sev-critical", dot: "bg-sev-critical" },
-  ELEVATED: { text: "text-sev-high", dot: "bg-sev-high" },
-  GUARDED: { text: "text-sev-medium", dot: "bg-sev-medium" },
-  LOW: { text: "text-sev-low", dot: "bg-sev-low" },
+  SEVERE: { text: "text-signal", bars: 4, word: "Severe" },
+  ELEVATED: { text: "text-ink", bars: 3, word: "Elevated" },
+  GUARDED: { text: "text-ink", bars: 2, word: "Guarded" },
+  LOW: { text: "text-ink", bars: 1, word: "Low" },
 };
+
+const OPEN = new Set(["Active", "Investigating", "Monitoring"]);
+export const isOpen = (t) => OPEN.has(t.status);
+
+// The lead story: the most severe threat still active, newest first.
+export function pickLead(threats) {
+  if (!threats.length) return null;
+  const rank = (t) => (t.status === "Active" ? 0 : isOpen(t) ? 1 : 2);
+  return [...threats].sort(
+    (a, b) =>
+      (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9) ||
+      rank(a) - rank(b) ||
+      new Date(b.timestamp) - new Date(a.timestamp),
+  )[0];
+}
+
+const TYPE_PLURAL = {
+  Phishing: "phishing",
+  Ransomware: "ransomware",
+  APT: "APT intrusions",
+  DDoS: "DDoS attacks",
+  Exploit: "exploits",
+  Malware: "malware",
+  "Credential Theft": "credential theft",
+  "Supply Chain": "supply chain attacks",
+  Network: "network attacks",
+  Cryptojacking: "cryptojacking",
+  "Insider Threat": "insider threats",
+  "Watering Hole": "watering holes",
+};
+const plural = (type) => TYPE_PLURAL[type] || type.toLowerCase();
+
+// One sentence of context for the headline band, built from the live data.
+export function postureSentence(threats) {
+  if (!threats.length) return "No threats in view yet.";
+  const crit = threats.filter((t) => t.severity === "Critical");
+  const live = crit.filter((t) => t.status === "Active");
+  const open = threats.filter(isOpen).length;
+  if (live.length === 0) {
+    const openCrit = crit.filter(isOpen).length;
+    if (openCrit) return `No critical threats marked active. ${openCrit} critical ${openCrit === 1 ? "report is" : "reports are"} still open.`;
+    if (crit.length) return `No critical threats active. All ${crit.length} critical reports are closed.`;
+    return `No critical threats in view. ${open} of ${threats.length} reports are still open.`;
+  }
+  if (live.length === 1) {
+    const [t] = live;
+    return `1 critical threat active, ${t.type === "APT" ? "an APT intrusion" : `${t.type.toLowerCase()} activity`} in ${t.region}.`;
+  }
+  const types = countBy(live, "type");
+  const regions = new Set(live.map((t) => t.region)).size;
+  const head = `${live.length} critical threats active`;
+  if (types[0].value === live.length) return `${head}, all of them ${plural(types[0].name)}.`;
+  if (types[0].value === 1) return `${head} across ${types.length} attack types and ${regions === 1 ? "one region" : `${regions} regions`}.`;
+  const [a, b] = types;
+  if (b && b.value > 1) return `${head}, ${a.value + b.value} of them ${plural(a.name)} or ${plural(b.name)}.`;
+  return `${head}, ${a.value} of them ${plural(a.name)}.`;
+}
 
 const weight = { Critical: 10, High: 5, Medium: 2, Low: 1 };
 
@@ -79,7 +136,6 @@ export function severityDistribution(threats) {
   return SEVERITIES.map((name) => ({
     name,
     value: threats.filter((t) => t.severity === name).length,
-    hex: severityConfig[name].hex,
   }));
 }
 
